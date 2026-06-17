@@ -1,0 +1,229 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
+import { useMemo, useState, type FormEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { useProducts, usePacks } from "@/data/products";
+import { MOROCCAN_CITIES, SHIPPING_FEE, FREE_SHIPPING_FROM } from "@/data/morocco";
+import { BadgeCheck, MessageCircle, ShoppingBag, Truck } from "lucide-react";
+import { z } from "zod";
+import { useCart, type CartItem } from "@/lib/cart";
+import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
+
+const search = z.object({ produit: z.string().optional() });
+
+export const Route = createFileRoute("/devis")({
+  validateSearch: search,
+  head: () => ({
+    meta: [
+      { title: "Commander — Coloria | Paiement à la livraison" },
+      { name: "description", content: "Passez commande chez Coloria avec paiement à la livraison partout au Maroc. Livraison rapide 24–72h." },
+    ],
+  }),
+  component: OrderPage,
+});
+
+function OrderPage() {
+  const { t } = useTranslation();
+  const { produit } = Route.useSearch();
+  const { items: cartItems, clear: clearCart, getInfo } = useCart();
+  const products = useProducts();
+  const packs = usePacks();
+  const [sending, setSending] = useState(false);
+  const [singleQty, setSingleQty] = useState(1);
+
+  const catalog = useMemo(
+    () => [
+      ...packs.map((p) => ({ slug: p.slug, label: p.title, price: p.price, kind: "pack" as const })),
+      ...products.map((p) => ({ slug: p.slug, label: p.title, price: p.price, kind: "book" as const })),
+    ],
+    [products, packs],
+  );
+
+  // Mode: explicit single product via URL > cart contents > empty selector fallback
+  const explicit = produit ? catalog.find((p) => p.slug === produit) : null;
+  const usingCart = !explicit && cartItems.length > 0;
+
+  const lines = useMemo(() => {
+    if (explicit) {
+      return [{ slug: explicit.slug, kind: explicit.kind, label: explicit.label, price: explicit.price, quantity: singleQty }];
+    }
+    return cartItems
+      .map((it: CartItem) => {
+        const info = getInfo(it);
+        return info ? { slug: info.slug, kind: info.kind, label: info.title, price: info.price, quantity: it.quantity } : null;
+      })
+      .filter((x): x is { slug: string; kind: "book" | "pack" | "custom-pack"; label: string; price: number; quantity: number } => !!x);
+  }, [explicit, cartItems, singleQty, getInfo]);
+
+
+  const subtotal = lines.reduce((s, l) => s + l.price * l.quantity, 0);
+  const shipping = subtotal === 0 ? 0 : subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
+  const total = subtotal + shipping;
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (lines.length === 0) {
+      toast.error(t("cart.empty"));
+      return;
+    }
+    setSending(true);
+    setTimeout(() => {
+      setSending(false);
+      (e.target as HTMLFormElement).reset();
+      setSingleQty(1);
+      if (usingCart) clearCart();
+      toast.success(t("quote.success"));
+    }, 600);
+  };
+
+  const whatsappLink = () => {
+    const list = lines.map((l) => `• ${l.label} × ${l.quantity} = ${l.price * l.quantity} DH`).join("%0A");
+    const msg = `Bonjour Coloria, je souhaite commander :%0A${list}%0A• Total : ${total} DH (paiement à la livraison)`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+  };
+
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="text-center">
+        <span className="inline-flex items-center gap-1 rounded-full border border-coral/30 bg-coral/10 px-3 py-1 text-xs font-medium uppercase tracking-wider text-coral">
+          <BadgeCheck className="h-3 w-3" />
+          {t("quote.codBadge")}
+        </span>
+        <h1 className="mt-4 font-serif text-4xl sm:text-5xl lg:text-6xl">{t("quote.title")}</h1>
+        <p className="mx-auto mt-4 max-w-xl text-muted-foreground">{t("quote.subtitle")}</p>
+      </div>
+
+      {lines.length === 0 && !explicit ? (
+        <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-dashed border-border bg-cream/40 p-10 text-center">
+          <ShoppingBag className="mx-auto h-10 w-10 text-muted-foreground" />
+          <p className="mt-4 text-muted-foreground">{t("cart.empty")}</p>
+          <Button asChild className="mt-6">
+            <Link to="/catalogue">{t("cart.emptyCta")}</Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          <form onSubmit={onSubmit} className="space-y-4 rounded-3xl border border-border bg-card p-6 sm:p-8">
+            {explicit && (
+              <>
+                <div>
+                  <Label htmlFor="product">{t("quote.product")}</Label>
+                  <Input id="product" value={explicit.label} readOnly className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="quantity">{t("quote.quantity")}</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min={1}
+                    value={singleQty}
+                    onChange={(e) => setSingleQty(Math.max(1, Number(e.target.value) || 1))}
+                    required
+                    className="mt-1.5"
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="name">{t("contact.name")}</Label>
+                <Input id="name" name="name" required className="mt-1.5" />
+              </div>
+              <div>
+                <Label htmlFor="phone">{t("contact.phone")}</Label>
+                <Input id="phone" name="phone" type="tel" required placeholder="+212 6 00 00 00 00" className="mt-1.5" />
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="city">{t("quote.city")}</Label>
+                <select
+                  id="city"
+                  name="city"
+                  required
+                  defaultValue=""
+                  className="mt-1.5 flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm"
+                >
+                  <option value="" disabled>—</option>
+                  {MOROCCAN_CITIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="address">{t("quote.address")}</Label>
+                <Input id="address" name="address" required className="mt-1.5" />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="details">{t("quote.details")}</Label>
+              <Textarea id="details" name="details" rows={3} className="mt-1.5" />
+            </div>
+
+            <Button type="submit" size="lg" className="w-full" disabled={sending}>
+              {t("quote.send")}
+            </Button>
+
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-[#25D366] bg-[#25D366]/5 px-4 py-2.5 text-sm font-medium text-[#1faa56] transition-colors hover:bg-[#25D366] hover:text-white"
+            >
+              <MessageCircle className="h-4 w-4" />
+              {t("quote.whatsappOrder")}
+            </a>
+          </form>
+
+          <aside className="h-fit rounded-3xl border border-border bg-cream p-6 sm:p-8">
+            <h2 className="font-serif text-xl">Récapitulatif</h2>
+            <ul className="mt-5 space-y-2 text-sm">
+              {lines.map((l) => (
+                <li key={l.slug} className="flex justify-between gap-2">
+                  <span className="text-muted-foreground">{l.label} × {l.quantity}</span>
+                  <span className="font-medium">{l.price * l.quantity} DH</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4 space-y-3 border-t border-border pt-4 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-2 text-muted-foreground">
+                  <Truck className="h-4 w-4" />
+                  {t("quote.shippingNote")}
+                </span>
+                <span className="font-medium">{shipping === 0 ? t("quote.free") : `${shipping} DH`}</span>
+              </div>
+              <div className="border-t border-border pt-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm text-muted-foreground">{t("quote.total")}</span>
+                  <span className="font-serif text-2xl text-primary">{total} DH</span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 rounded-2xl bg-background p-4 text-xs text-muted-foreground">
+              <div className="flex items-start gap-2">
+                <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-coral" />
+                <p>
+                  Vous payez en espèces directement au livreur. Aucune avance, aucun risque.
+                  Livraison offerte dès <strong>{FREE_SHIPPING_FROM} DH</strong>.
+                </p>
+              </div>
+            </div>
+            {usingCart && (
+              <Button asChild variant="outline" className="mt-3 w-full">
+                <Link to="/panier">{t("cart.title")}</Link>
+              </Button>
+            )}
+          </aside>
+        </div>
+      )}
+    </div>
+  );
+}
