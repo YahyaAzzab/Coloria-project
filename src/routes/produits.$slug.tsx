@@ -12,8 +12,8 @@ import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
 export const Route = createFileRoute("/produits/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug} — Coloria` },
-      { name: "description", content: "Livre de coloriage premium Coloria." },
+      { title: `${params.slug} — Coloragy` },
+      { name: "description", content: "Livre de coloragyge premium Coloragy." },
     ],
   }),
   component: ProductPage,
@@ -48,7 +48,7 @@ function ProductPage() {
   };
 
   const waMsg = encodeURIComponent(
-    `Bonjour Coloria, je suis intéressé(e) par le livre "${product.title}" (${product.price} DH). Pouvez-vous m'en dire plus ?`,
+    `Bonjour Coloragy, je suis intéressé(e) par le livre "${product.title}" (${product.price} DH). Pouvez-vous m'en dire plus ?`,
   );
 
   return (
@@ -87,7 +87,7 @@ function ProductPage() {
         {/* Info */}
         <div className="flex flex-col">
           <span className="inline-block w-fit rounded-full border border-border bg-cream px-3 py-1 text-xs uppercase tracking-wider text-muted-foreground">
-            Livre Coloria
+            Livre Coloragy
           </span>
           <h1 className="mt-4 font-serif text-4xl sm:text-5xl">{product.title}</h1>
           <p className="mt-2 text-lg text-muted-foreground">{product.tagline}</p>

@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Sparkles, Heart, Award } from "lucide-react";
-import heroImg from "@/assets/hero-coloria.jpg";
+import heroImg from "@/assets/hero-coloragy.jpg";
 
 export const Route = createFileRoute("/a-propos")({
   head: () => ({
     meta: [
-      { title: "À propos — Coloria" },
-      { name: "description", content: "L'histoire de Coloria, marque marocaine de livres de coloriage premium." },
+      { title: "À propos — Coloragy" },
+      { name: "description", content: "L'histoire de Coloragy, marque marocaine de livres de coloragyge premium." },
     ],
   }),
   component: AboutPage,
@@ -28,7 +28,7 @@ function AboutPage() {
             <p className="mt-4 text-pretty leading-relaxed">{t("about.p2")}</p>
           </div>
           <div className="overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)]">
-            <img src={heroImg} alt="Coloria" loading="lazy" className="h-full w-full object-cover" />
+            <img src={heroImg} alt="Coloragy" loading="lazy" className="h-full w-full object-cover" />
           </div>
         </div>
       </section>

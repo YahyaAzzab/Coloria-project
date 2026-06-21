@@ -16,7 +16,7 @@ export const Route = createFileRoute("/packs")({
   },
   head: () => ({
     meta: [
-      { title: "Composez votre pack — Coloria" },
+      { title: "Composez votre pack — Coloragy" },
       {
         name: "description",
         content:

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Instagram, Facebook, Phone, MapPin, BadgeCheck, Truck } from "lucide-react";
+import logo from "@/assets/logo-coloragy.png";
 
 export function SiteFooter() {
   const { t } = useTranslation();
@@ -11,9 +12,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-2">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-coral via-ocre to-turquoise text-primary-foreground font-serif text-lg">
-              C
-            </span>
+            <img src={logo} alt={t("brand")} className="h-10 w-auto" />
             <span className="font-serif text-2xl">{t("brand")}</span>
           </div>
           <p className="mt-4 max-w-md text-sm text-muted-foreground">{t("tagline")}</p>

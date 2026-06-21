@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Leaf, Truck, Pencil, Quote, Star, Gift } from "lucide-react";
-import heroImg from "@/assets/hero-coloria.jpg";
+import heroImg from "@/assets/hero-coloragy.jpg";
 import { useProducts, usePacks } from "@/data/products";
 import { useTestimonials } from "@/data/testimonials";
 import { ProductCard } from "@/components/ProductCard";
@@ -12,10 +12,10 @@ import { TrustStrip } from "@/components/TrustStrip";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Coloria — Livres de coloriage premium pour tous les âges" },
-      { name: "description", content: "Découvrez Coloria : livres de coloriage premium et packs créatifs pour enfants, ados et adultes. Papier 120g, illustrations originales, livraison soignée." },
-      { property: "og:title", content: "Coloria — L'art du coloriage, sublimé" },
-      { property: "og:description", content: "Livres de coloriage premium et packs créatifs pour tous les âges. Détente, créativité, anti-stress." },
+      { title: "Coloragy — Livres de coloragyge premium pour tous les âges" },
+      { name: "description", content: "Découvrez Coloragy : livres de coloragyge premium et packs créatifs pour enfants, ados et adultes. Papier 120g, illustrations originales, livraison soignée." },
+      { property: "og:title", content: "Coloragy — L'art du coloragyge, sublimé" },
+      { property: "og:description", content: "Livres de coloragyge premium et packs créatifs pour tous les âges. Détente, créativité, anti-stress." },
     ],
   }),
   component: Home,
@@ -70,7 +70,7 @@ function Home() {
             <div className="relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)]">
               <img
                 src={heroImg}
-                alt="Livres de coloriage Coloria"
+                alt="Livres de coloragyge Coloragy"
                 width={1600}
                 height={1100}
                 className="h-full w-full object-cover"

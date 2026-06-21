@@ -31,7 +31,7 @@ export function applyDirection(lang: string) {
 
 export function loadStoredLanguage() {
   if (typeof window === "undefined") return;
-  const stored = window.localStorage.getItem("coloria-lang");
+  const stored = window.localStorage.getItem("coloragy-lang");
   if (stored && ["fr", "ar", "en"].includes(stored) && stored !== i18n.language) {
     i18n.changeLanguage(stored);
   }

@@ -12,8 +12,8 @@ import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Coloria" },
-      { name: "description", content: "Contactez Coloria pour toute question, projet ou commande." },
+      { title: "Contact — Coloragy" },
+      { name: "description", content: "Contactez Coloragy pour toute question, projet ou commande." },
     ],
   }),
   component: ContactPage,
@@ -57,7 +57,7 @@ function ContactPage() {
             </div>
           ))}
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Bonjour Coloria, j'ai une question.")}`}
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Bonjour Coloragy, j'ai une question.")}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 rounded-2xl border border-[#25D366] bg-[#25D366]/10 px-5 py-4 text-sm font-medium text-[#1faa56] transition-colors hover:bg-[#25D366] hover:text-white"

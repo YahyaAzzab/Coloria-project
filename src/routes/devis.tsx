@@ -20,8 +20,8 @@ export const Route = createFileRoute("/devis")({
   validateSearch: search,
   head: () => ({
     meta: [
-      { title: "Commander — Coloria | Paiement à la livraison" },
-      { name: "description", content: "Passez commande chez Coloria avec paiement à la livraison partout au Maroc. Livraison rapide 24–72h." },
+      { title: "Commander — Coloragy | Paiement à la livraison" },
+      { name: "description", content: "Passez commande chez Coloragy avec paiement à la livraison partout au Maroc. Livraison rapide 24–72h." },
     ],
   }),
   component: OrderPage,
@@ -112,7 +112,7 @@ function OrderPage() {
 
   const whatsappLink = () => {
     const list = lines.map((l) => `• ${l.label} × ${l.quantity} = ${l.price * l.quantity} DH`).join("%0A");
-    const msg = `Bonjour Coloria, je souhaite commander :%0A${list}%0A• Total : ${total} DH (paiement à la livraison)`;
+    const msg = `Bonjour Coloragy, je souhaite commander :%0A${list}%0A• Total : ${total} DH (paiement à la livraison)`;
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   };
 

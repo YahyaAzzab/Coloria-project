@@ -8,7 +8,7 @@ export function buildCartWhatsAppLink(
   getInfo: (it: CartItem) => CartItemInfo | null,
 ): string {
   if (items.length === 0) {
-    const msg = encodeURIComponent("Bonjour Coloria, je souhaite passer une commande.");
+    const msg = encodeURIComponent("Bonjour Coloragy, je souhaite passer une commande.");
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   }
   const lines = items
@@ -28,7 +28,7 @@ export function buildCartWhatsAppLink(
   const shippingLine = shipping === 0 ? "Livraison : offerte" : `Livraison : ${shipping} DH`;
 
   const text = [
-    "Bonjour Coloria, je souhaite passer la commande suivante :",
+    "Bonjour Coloragy, je souhaite passer la commande suivante :",
     "",
     ...lines,
     "",

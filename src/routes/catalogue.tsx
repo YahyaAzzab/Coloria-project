@@ -9,8 +9,8 @@ import { ChevronDown } from "lucide-react";
 export const Route = createFileRoute("/catalogue")({
   head: () => ({
     meta: [
-      { title: "Catalogue — Coloria" },
-      { name: "description", content: "Tous nos livres de coloriage premium en un coup d'œil." },
+      { title: "Catalogue — Coloragy" },
+      { name: "description", content: "Tous nos livres de coloragyge premium en un coup d'œil." },
     ],
   }),
   component: CataloguePage,

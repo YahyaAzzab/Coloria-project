@@ -18,7 +18,7 @@ export function LanguageSwitcher() {
     i18n.changeLanguage(code);
     applyDirection(code);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("coloria-lang", code);
+      window.localStorage.setItem("coloragy-lang", code);
     }
   };
 

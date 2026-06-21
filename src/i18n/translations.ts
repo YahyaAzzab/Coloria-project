@@ -1,8 +1,8 @@
 export const resources = {
   fr: {
     translation: {
-      brand: "Coloria",
-      tagline: "L'art du coloriage, sublimé.",
+      brand: "Coloragy",
+      tagline: "L'art du coloragyge, sublimé.",
       nav: {
         home: "Accueil",
         catalogue: "Livres",
@@ -72,13 +72,13 @@ export const resources = {
       },
       cataloguePage: {
         eyebrow: "Catalogue",
-        title: "Nos Livres de Coloriage",
+        title: "Nos Livres de Coloragyge",
         subtitle: "Découvrez nos meilleures créations à 98 DH chacune.",
       },
       about: {
-        title: "L'histoire Coloria",
+        title: "L'histoire Coloragy",
         subtitle: "Né de l'amour du papier, de l'art et du calme intérieur.",
-        p1: "Coloria est une marque marocaine dédiée à l'art du coloriage premium. Chaque livre est pensé comme un objet précieux : papier épais 120g, illustrations originales et reliure soignée.",
+        p1: "Coloragy est une marque marocaine dédiée à l'art du coloragyge premium. Chaque livre est pensé comme un objet précieux : papier épais 120g, illustrations originales et reliure soignée.",
         p2: "Notre mission : transformer un moment ordinaire en pause créative, qu'il s'agisse d'un enfant qui découvre les couleurs ou d'un adulte qui cherche à se reconnecter à lui-même.",
         values: "Nos valeurs",
         valueList: [
@@ -126,9 +126,9 @@ export const resources = {
         support: "Support 7j/7",
       },
       hero: {
-        eyebrow: "Livres de coloriage premium",
+        eyebrow: "Livres de coloragyge premium",
         title: "Évadez-vous, page après page.",
-        subtitle: "Des livres de coloriage thématiques et des packs créatifs conçus pour libérer l'imagination, apaiser l'esprit et révéler l'artiste qui sommeille en vous.",
+        subtitle: "Des livres de coloragyge thématiques et des packs créatifs conçus pour libérer l'imagination, apaiser l'esprit et révéler l'artiste qui sommeille en vous.",
         cta: "Découvrir le catalogue",
         ctaSecondary: "Commander maintenant",
       },
@@ -154,7 +154,7 @@ export const resources = {
         subtitle: "Les favoris de nos clients, soigneusement sélectionnés.",
       },
       benefits: {
-        title: "Pourquoi Coloria",
+        title: "Pourquoi Coloragy",
         items: [
           { title: "Paiement à la livraison", desc: "Vous payez en cash au livreur, partout au Maroc. Zéro avance." },
           { title: "Livraison rapide", desc: "Expédition 24–72h depuis Fès, dans toutes les villes du royaume." },
@@ -185,7 +185,7 @@ export const resources = {
   },
   en: {
     translation: {
-      brand: "Coloria",
+      brand: "Coloragy",
       tagline: "The art of coloring, refined.",
       nav: {
         home: "Home",
@@ -249,9 +249,9 @@ export const resources = {
       },
       cataloguePage: { eyebrow: "Catalogue", title: "Our Coloring Books", subtitle: "Discover our best creations at 98 DH each." },
       about: {
-        title: "The Coloria story",
+        title: "The Coloragy story",
         subtitle: "Born from a love of paper, art and inner calm.",
-        p1: "Coloria is a Moroccan brand dedicated to premium coloring. Each book is designed as a precious object: 120gsm paper, original illustrations and careful binding.",
+        p1: "Coloragy is a Moroccan brand dedicated to premium coloring. Each book is designed as a precious object: 120gsm paper, original illustrations and careful binding.",
         p2: "Our mission: turn ordinary moments into creative pauses, whether for a child discovering colors or an adult reconnecting with themselves.",
         values: "Our values",
         valueList: [
@@ -294,7 +294,7 @@ export const resources = {
       },
       featured: { title: "Current best-sellers", subtitle: "Our customers' favorites, carefully curated." },
       benefits: {
-        title: "Why Coloria",
+        title: "Why Coloragy",
         items: [
           { title: "Premium paper", desc: "Thick 120gsm, no bleed-through, studio quality." },
           { title: "Original artwork", desc: "Created by our artists, never generic imagery." },
@@ -320,7 +320,7 @@ export const resources = {
   },
   ar: {
     translation: {
-      brand: "كولوريا",
+      brand: "كولوراجي",
       tagline: "فن التلوين، بأرقى صورة.",
       nav: {
         home: "الرئيسية",
@@ -384,9 +384,9 @@ export const resources = {
       },
       cataloguePage: { eyebrow: "الكتالوج", title: "كتب التلوين", subtitle: "اكتشف أفضل أعمالنا بـ 98 د.م فقط." },
       about: {
-        title: "قصة كولوريا",
+        title: "قصة كولوراجي",
         subtitle: "وُلدت من حب الورق والفن والهدوء الداخلي.",
-        p1: "كولوريا علامة مغربية مكرسة لفن التلوين الفاخر. كل كتاب مصمم كقطعة ثمينة: ورق سميك 120غ، رسومات أصلية وتجليد متقن.",
+        p1: "كولوراجي علامة مغربية مكرسة لفن التلوين الفاخر. كل كتاب مصمم كقطعة ثمينة: ورق سميك 120غ، رسومات أصلية وتجليد متقن.",
         p2: "مهمتنا: تحويل اللحظات العادية إلى استراحات إبداعية، سواء لطفل يكتشف الألوان أو لبالغ يعيد الاتصال بذاته.",
         values: "قيمنا",
         valueList: [
@@ -429,7 +429,7 @@ export const resources = {
       },
       featured: { title: "الأكثر مبيعاً", subtitle: "المفضلات لدى عملائنا، مختارة بعناية." },
       benefits: {
-        title: "لماذا كولوريا",
+        title: "لماذا كولوراجي",
         items: [
           { title: "ورق فاخر", desc: "وزن 120غ، بدون شفافية، جودة استوديو." },
           { title: "رسوم أصلية", desc: "من إبداع فنانينا، لا صور عامة." },

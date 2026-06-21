@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
+import logo from "@/assets/logo-coloragy.png";
 
 export function SiteHeader() {
   const { t } = useTranslation();
@@ -25,9 +26,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2 group">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-coral via-ocre to-turquoise text-primary-foreground font-serif text-lg">
-            C
-          </span>
+          <img src={logo} alt={t("brand")} className="h-9 w-auto" />
           <span className="font-serif text-xl tracking-tight">{t("brand")}</span>
         </Link>
 

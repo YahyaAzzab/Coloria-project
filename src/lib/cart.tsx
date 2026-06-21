@@ -42,8 +42,8 @@ type CartContextValue = {
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
-const STORAGE_KEY = "coloria-cart-v1";
-const COOKIE_KEY = "coloria_cart";
+const STORAGE_KEY = "coloragy-cart-v1";
+const COOKIE_KEY = "coloragy_cart";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 180;
 
 function readStorage(): CartItem[] {

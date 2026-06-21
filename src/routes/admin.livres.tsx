@@ -32,7 +32,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Search, Image as ImageIcon, EyeOff, BookTemplate } from "lucide-react";
 import { toast } from "sonner";
 import { guardAdminRoute } from "@/lib/admin-auth.functions";
 import { MultiImagePicker } from "@/components/admin/MultiImagePicker";
@@ -128,60 +128,81 @@ function AdminBooks() {
 
   return (
     <AdminShell title="Livres">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Rechercher…" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between animate-in fade-in slide-in-from-top-4">
+        <div className="relative w-full sm:max-w-sm">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Input 
+            placeholder="Rechercher un livre..." 
+            value={query} 
+            onChange={(e) => setQuery(e.target.value)} 
+            className="pl-9 bg-white border-slate-200 rounded-xl shadow-sm focus-visible:ring-primary/20" 
+          />
         </div>
-        <Button onClick={() => setEditing(emptyBook())}><Plus className="mr-2 h-4 w-4" /> Nouveau livre</Button>
+        <Button onClick={() => setEditing(emptyBook())} className="rounded-xl shadow-md whitespace-nowrap">
+          <Plus className="mr-2 h-4 w-4" /> Ajouter un livre
+        </Button>
       </div>
 
       {books === null ? (
-        <div className="grid place-items-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+        <div className="grid place-items-center py-24"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-16 text-center shadow-sm animate-in fade-in">
+          <div className="mx-auto h-16 w-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+            <BookTemplate className="h-8 w-8 text-slate-300" />
+          </div>
+          <h3 className="text-lg font-medium text-slate-900">Aucun livre trouvé</h3>
+          <p className="mt-2 text-slate-500">Ajoutez votre premier livre de coloriage pour commencer.</p>
+        </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-border bg-background">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left text-xs uppercase text-muted-foreground">
-              <tr>
-                <th className="px-4 py-3 w-16">Image</th>
-                <th className="px-4 py-3">Titre</th>
-                <th className="px-4 py-3 hidden md:table-cell">Slug</th>
-                <th className="px-4 py-3 hidden md:table-cell">Univers</th>
-                <th className="px-4 py-3 text-right">Prix</th>
-                <th className="px-4 py-3 text-center">Actif</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((b) => (
-                <tr key={b.id} className="border-t border-border">
-                  <td className="px-4 py-3">
-                    {b.image_url ? (
-                      <img src={b.image_url} alt={b.title} className="h-12 w-12 rounded object-cover" />
-                    ) : (
-                      <div className="h-12 w-12 rounded bg-muted" />
-                    )}
-                  </td>
-                  <td className="px-4 py-3 font-medium">{b.title}</td>
-                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">{b.slug}</td>
-                  <td className="px-4 py-3 hidden md:table-cell capitalize">{b.audience}</td>
-                  <td className="px-4 py-3 text-right tabular-nums">{b.price} DH</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={`inline-block h-2 w-2 rounded-full ${b.is_active ? "bg-green-500" : "bg-muted-foreground"}`} />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => setEditing(b)}><Pencil className="h-4 w-4" /></Button>
-                      <Button size="icon" variant="ghost" onClick={() => setDeleting(b)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length === 0 && (
-                <tr><td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">Aucun livre.</td></tr>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 animate-in fade-in duration-500">
+          {filtered.map((b) => (
+            <div key={b.id} className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl ${!b.is_active ? 'border-slate-200 opacity-75' : 'border-slate-200 hover:border-primary/30'}`}>
+              
+              {!b.is_active && (
+                <div className="absolute right-3 top-3 z-10 rounded-full bg-slate-900/80 p-1.5 text-white backdrop-blur-md shadow-sm">
+                  <EyeOff className="h-4 w-4" />
+                </div>
               )}
-            </tbody>
-          </table>
+              
+              <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
+                {b.images.length > 0 ? (
+                  <img src={b.images[0]} alt={b.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                ) : (
+                  <div className="flex h-full items-center justify-center">
+                    <ImageIcon className="h-10 w-10 text-slate-300" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              </div>
+              
+              <div className="flex flex-1 flex-col p-5">
+                <div className="mb-1 flex items-center gap-2 text-xs font-medium text-slate-500">
+                  <span className="capitalize px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{b.audience}</span>
+                  <span className="truncate">{b.slug}</span>
+                </div>
+                
+                <h3 className="font-serif text-lg font-semibold text-slate-900 leading-tight mb-2 group-hover:text-primary transition-colors">
+                  {b.title}
+                </h3>
+                
+                <p className="text-sm text-slate-500 line-clamp-2 mb-4 flex-1">
+                  {b.tagline || b.description || "Aucune description"}
+                </p>
+                
+                <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
+                  <span className="text-lg font-bold text-slate-900">{b.price} DH</span>
+                  <div className="flex gap-1.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full" onClick={() => setEditing(b)}>
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button size="icon" variant="destructive" className="h-8 w-8 rounded-full" onClick={() => setDeleting(b)}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -198,14 +219,19 @@ function AdminBooks() {
       )}
 
       <AlertDialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl border-slate-200">
           <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer ce livre ?</AlertDialogTitle>
-            <AlertDialogDescription>« {deleting?.title} » sera définitivement supprimé.</AlertDialogDescription>
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-4">
+              <Trash2 className="h-6 w-6 text-red-600" />
+            </div>
+            <AlertDialogTitle className="text-center text-xl font-serif">Supprimer le livre ?</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Le livre « <span className="font-semibold text-slate-900">{deleting?.title}</span> » sera définitivement supprimé.
+            </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleting && handleDelete(deleting)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
+          <AlertDialogFooter className="sm:justify-center gap-2 mt-4">
+            <AlertDialogCancel className="rounded-xl">Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleting && handleDelete(deleting)} className="rounded-xl bg-red-600 text-white hover:bg-red-700">Supprimer</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -250,21 +276,27 @@ function BookDialog({ book, onClose, onSaved }: { book: Book; onClose: () => voi
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>{isNew ? "Nouveau livre" : "Modifier le livre"}</DialogTitle></DialogHeader>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl p-0 gap-0 border-slate-200">
+        <div className="bg-slate-50 border-b border-slate-100 p-6 sticky top-0 z-10 flex justify-between items-center">
+          <DialogTitle className="text-xl font-serif">{isNew ? "Nouveau livre" : "Modifier le livre"}</DialogTitle>
+        </div>
 
-        <div className="grid gap-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Titre"><Input value={form.title} onChange={(e) => set("title", e.target.value)} /></Field>
-            <Field label="Slug (URL)"><Input value={form.slug} onChange={(e) => set("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} /></Field>
+        <div className="p-6 grid gap-8">
+          <div className="grid gap-6 sm:grid-cols-2 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+            <Field label="Titre"><Input value={form.title} onChange={(e) => set("title", e.target.value)} className="rounded-lg" /></Field>
+            <Field label="Slug (URL)"><Input value={form.slug} onChange={(e) => set("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} className="rounded-lg" /></Field>
           </div>
-          <Field label="Sous-titre"><Input value={form.tagline ?? ""} onChange={(e) => set("tagline", e.target.value)} /></Field>
-          <Field label="Description"><Textarea rows={4} value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} /></Field>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Field label="Prix (DH)"><Input type="number" value={form.price} onChange={(e) => set("price", Number(e.target.value))} /></Field>
+          
+          <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm space-y-6">
+            <Field label="Sous-titre"><Input value={form.tagline ?? ""} onChange={(e) => set("tagline", e.target.value)} className="rounded-lg" /></Field>
+            <Field label="Description"><Textarea rows={4} value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} className="rounded-lg resize-y" /></Field>
+          </div>
+          
+          <div className="grid gap-6 sm:grid-cols-3 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+            <Field label="Prix (DH)"><Input type="number" value={form.price} onChange={(e) => set("price", Number(e.target.value))} className="rounded-lg" /></Field>
             <Field label="Univers">
               <Select value={form.audience} onValueChange={(v) => set("audience", v as Audience)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="rounded-lg"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="kids">Enfants</SelectItem>
                   <SelectItem value="teens">Ados</SelectItem>
@@ -272,28 +304,34 @@ function BookDialog({ book, onClose, onSaved }: { book: Book; onClose: () => voi
                 </SelectContent>
               </Select>
             </Field>
-            <Field label="Ordre d'affichage"><Input type="number" value={form.sort_order ?? 0} onChange={(e) => set("sort_order", Number(e.target.value))} /></Field>
+            <Field label="Ordre d'affichage"><Input type="number" value={form.sort_order ?? 0} onChange={(e) => set("sort_order", Number(e.target.value))} className="rounded-lg" /></Field>
           </div>
-          <Field label="Images (la première est l'image principale)"><MultiImagePicker value={form.images ?? []} onChange={(v) => set("images", v)} /></Field>
-          <Field label="Points forts (un par ligne)"><Textarea rows={3} value={highlightsText} onChange={(e) => setHighlightsText(e.target.value)} /></Field>
-
-          <div className="grid gap-4 sm:grid-cols-4">
-            <Field label="Pages"><Input type="number" value={form.specs?.pages ?? 64} onChange={(e) => set("specs", { ...(form.specs ?? {}), pages: Number(e.target.value) })} /></Field>
-            <Field label="Format"><Input value={form.specs?.format ?? ""} onChange={(e) => set("specs", { ...(form.specs ?? {}), format: e.target.value })} /></Field>
-            <Field label="Papier"><Input value={form.specs?.paper ?? ""} onChange={(e) => set("specs", { ...(form.specs ?? {}), paper: e.target.value })} /></Field>
-            <Field label="Reliure"><Input value={form.specs?.binding ?? ""} onChange={(e) => set("specs", { ...(form.specs ?? {}), binding: e.target.value })} /></Field>
+          
+          <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm space-y-6">
+            <Field label="Images (la première est l'image principale)"><MultiImagePicker value={form.images ?? []} onChange={(v) => set("images", v)} /></Field>
+            <Field label="Points forts (un par ligne)"><Textarea rows={4} value={highlightsText} onChange={(e) => setHighlightsText(e.target.value)} className="rounded-lg resize-y" /></Field>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Switch checked={form.is_active} onCheckedChange={(v) => set("is_active", v)} />
-            <Label>Visible sur le site</Label>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+            <Field label="Pages"><Input type="number" value={form.specs?.pages ?? 64} onChange={(e) => set("specs", { ...(form.specs ?? {}), pages: Number(e.target.value) })} className="rounded-lg" /></Field>
+            <Field label="Format"><Input value={form.specs?.format ?? ""} onChange={(e) => set("specs", { ...(form.specs ?? {}), format: e.target.value })} className="rounded-lg" /></Field>
+            <Field label="Papier"><Input value={form.specs?.paper ?? ""} onChange={(e) => set("specs", { ...(form.specs ?? {}), paper: e.target.value })} className="rounded-lg" /></Field>
+            <Field label="Reliure"><Input value={form.specs?.binding ?? ""} onChange={(e) => set("specs", { ...(form.specs ?? {}), binding: e.target.value })} className="rounded-lg" /></Field>
+          </div>
+
+          <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+            <Switch checked={form.is_active} onCheckedChange={(v) => set("is_active", v)} id="is-active" />
+            <Label htmlFor="is-active" className="text-sm font-medium cursor-pointer">Visible sur le catalogue public</Label>
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Annuler</Button>
-          <Button onClick={save} disabled={saving}>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enregistrer"}</Button>
-        </DialogFooter>
+        <div className="bg-slate-50 border-t border-slate-100 p-6 sticky bottom-0 z-10 flex justify-end gap-3">
+          <Button variant="outline" onClick={onClose} className="rounded-xl">Annuler</Button>
+          <Button onClick={save} disabled={saving} className="rounded-xl shadow-md">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            Enregistrer le livre
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -301,8 +339,8 @@ function BookDialog({ book, onClose, onSaved }: { book: Book; onClose: () => voi
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1.5">
-      <Label className="text-xs">{label}</Label>
+    <div className="space-y-2">
+      <Label className="text-sm font-medium text-slate-700">{label}</Label>
       {children}
     </div>
   );

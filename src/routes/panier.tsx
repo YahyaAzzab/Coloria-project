@@ -8,7 +8,7 @@ import { SHIPPING_FEE, FREE_SHIPPING_FROM } from "@/data/morocco";
 export const Route = createFileRoute("/panier")({
   head: () => ({
     meta: [
-      { title: "Panier — Coloria" },
+      { title: "Panier — Coloragy" },
       { name: "description", content: "Vérifiez votre panier et passez commande avec paiement à la livraison." },
     ],
   }),

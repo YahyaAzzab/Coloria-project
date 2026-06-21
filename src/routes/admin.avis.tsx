@@ -24,7 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Plus, Pencil, Trash2, ImageIcon } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, ImageIcon, EyeOff, MessageSquareQuote, User } from "lucide-react";
 import { toast } from "sonner";
 import { guardAdminRoute } from "@/lib/admin-auth.functions";
 import { ImagePicker } from "@/components/admin/ImagePicker";
@@ -80,42 +80,70 @@ function AdminTestimonials() {
 
   return (
     <AdminShell title="Avis clients">
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          Ajoutez des avis clients avec texte et/ou photo (capture de conversation, témoignage…).
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between animate-in fade-in slide-in-from-top-4">
+        <p className="text-sm text-slate-500 max-w-lg">
+          Gérez les témoignages affichés sur la page d'accueil. Vous pouvez ajouter du texte, une photo du client ou même une capture d'écran de conversation WhatsApp.
         </p>
-        <Button onClick={() => setEditing(empty())}><Plus className="mr-2 h-4 w-4" /> Nouvel avis</Button>
+        <Button onClick={() => setEditing(empty())} className="rounded-xl shadow-md whitespace-nowrap">
+          <Plus className="mr-2 h-4 w-4" /> Nouvel avis
+        </Button>
       </div>
 
       {items === null ? (
-        <div className="grid place-items-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+        <div className="grid place-items-center py-24"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
       ) : items.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-border p-12 text-center text-muted-foreground">
-          Aucun avis. Cliquez sur « Nouvel avis » pour en ajouter un.
+        <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-16 text-center shadow-sm animate-in fade-in">
+          <div className="mx-auto h-16 w-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+            <MessageSquareQuote className="h-8 w-8 text-slate-300" />
+          </div>
+          <h3 className="text-lg font-medium text-slate-900">Aucun avis client</h3>
+          <p className="mt-2 text-slate-500">Ajoutez les premiers retours de vos clients pour rassurer vos visiteurs.</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {items.map((t) => (
-            <div key={t.id} className="overflow-hidden rounded-lg border border-border bg-background">
-              {t.image_url ? (
-                <img src={t.image_url} alt={t.name} className="h-48 w-full object-cover" />
-              ) : (
-                <div className="grid h-48 w-full place-items-center bg-muted text-muted-foreground">
-                  <ImageIcon className="h-8 w-8" />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 animate-in fade-in duration-500">
+          {items.map((t, i) => (
+            <div key={t.id} className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl ${!t.is_active ? 'border-slate-200 opacity-75' : 'border-slate-200 hover:border-primary/30'}`} style={{ animationDelay: `${i * 100}ms` }}>
+              
+              {!t.is_active && (
+                <div className="absolute right-3 top-3 z-10 rounded-full bg-slate-900/80 p-1.5 text-white backdrop-blur-md shadow-sm">
+                  <EyeOff className="h-4 w-4" />
                 </div>
               )}
-              <div className="p-4">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <div className="font-medium">{t.name}</div>
-                    {t.role && <div className="text-xs text-muted-foreground">{t.role}</div>}
-                  </div>
-                  <span className={`mt-1 inline-block h-2 w-2 rounded-full ${t.is_active ? "bg-green-500" : "bg-muted-foreground"}`} />
+
+              {t.image_url ? (
+                <div className="aspect-square w-full overflow-hidden bg-slate-100">
+                  <img src={t.image_url} alt={t.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 </div>
-                {t.text && <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{t.text}</p>}
-                <div className="mt-3 flex justify-end gap-1">
-                  <Button size="sm" variant="ghost" onClick={() => setEditing(t)}><Pencil className="mr-1 h-4 w-4" /> Modifier</Button>
-                  <Button size="sm" variant="ghost" onClick={() => setDeleting(t)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+              ) : (
+                <div className="flex aspect-[3/1] w-full items-center justify-center bg-slate-50 border-b border-slate-100">
+                   <MessageSquareQuote className="h-8 w-8 text-slate-300" />
+                </div>
+              )}
+              
+              <div className="flex flex-1 flex-col p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-10 w-10 flex-shrink-0 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                    <User className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 leading-none">{t.name}</h3>
+                    {t.role && <p className="text-xs text-slate-500 mt-1">{t.role}</p>}
+                  </div>
+                </div>
+
+                {t.text && (
+                  <p className="text-sm text-slate-600 italic line-clamp-4 relative z-10 flex-1">
+                    "{t.text}"
+                  </p>
+                )}
+
+                <div className="mt-5 flex justify-end gap-2 border-t border-slate-100 pt-4">
+                  <Button size="sm" variant="outline" className="rounded-lg text-slate-500 hover:text-primary hover:border-primary/30" onClick={() => setEditing(t)}>
+                    <Pencil className="mr-1.5 h-3.5 w-3.5" /> Modifier
+                  </Button>
+                  <Button size="icon" variant="outline" className="h-8 w-8 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 hover:border-red-200" onClick={() => setDeleting(t)}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -128,14 +156,19 @@ function AdminTestimonials() {
       )}
 
       <AlertDialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl border-slate-200">
           <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer cet avis ?</AlertDialogTitle>
-            <AlertDialogDescription>L'avis de « {deleting?.name} » sera définitivement supprimé.</AlertDialogDescription>
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-4">
+              <Trash2 className="h-6 w-6 text-red-600" />
+            </div>
+            <AlertDialogTitle className="text-center text-xl font-serif">Supprimer cet avis ?</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              L'avis de « <span className="font-semibold text-slate-900">{deleting?.name}</span> » sera définitivement supprimé.
+            </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleting && handleDelete(deleting)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
+          <AlertDialogFooter className="sm:justify-center gap-2 mt-4">
+            <AlertDialogCancel className="rounded-xl">Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleting && handleDelete(deleting)} className="rounded-xl bg-red-600 text-white hover:bg-red-700">Supprimer</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -176,36 +209,52 @@ function Editor({ item, onClose, onSaved }: { item: Testimonial; onClose: () => 
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>{isNew ? "Nouvel avis" : "Modifier l'avis"}</DialogTitle></DialogHeader>
-        <div className="grid gap-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Nom"><Input value={form.name} onChange={(e) => set("name", e.target.value)} /></Field>
-            <Field label="Rôle / lieu (optionnel)"><Input value={form.role ?? ""} onChange={(e) => set("role", e.target.value)} placeholder="Enseignante, Casablanca…" /></Field>
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl p-0 gap-0 border-slate-200">
+        <div className="bg-slate-50 border-b border-slate-100 p-6 sticky top-0 z-10">
+          <DialogTitle className="text-xl font-serif">{isNew ? "Nouvel avis" : "Modifier l'avis"}</DialogTitle>
+        </div>
+        
+        <div className="p-6 grid gap-6">
+          <div className="grid gap-6 sm:grid-cols-2 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+            <Field label="Nom complet"><Input value={form.name} onChange={(e) => set("name", e.target.value)} className="rounded-lg" /></Field>
+            <Field label="Rôle / Lieu (ex: Maman de 2 enfants)"><Input value={form.role ?? ""} onChange={(e) => set("role", e.target.value)} className="rounded-lg" /></Field>
           </div>
-          <Field label="Témoignage (optionnel si image)">
-            <Textarea rows={4} value={form.text ?? ""} onChange={(e) => set("text", e.target.value)} placeholder="Ce que dit le client…" />
-          </Field>
-          <Field label="Image (capture de conversation, photo client…)">
-            <ImagePicker value={form.image_url ?? ""} onChange={(v) => set("image_url", v)} />
-          </Field>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Ordre"><Input type="number" value={form.sort_order ?? 0} onChange={(e) => set("sort_order", Number(e.target.value))} /></Field>
-            <div className="flex items-center gap-2 pt-6">
-              <Switch checked={form.is_active} onCheckedChange={(v) => set("is_active", v)} />
-              <Label>Visible sur le site</Label>
+          
+          <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm space-y-6">
+            <Field label="Message du client">
+              <Textarea rows={4} value={form.text ?? ""} onChange={(e) => set("text", e.target.value)} placeholder="Ce que le client a pensé du produit..." className="rounded-lg resize-y" />
+            </Field>
+            <Field label="Photo du client ou capture d'écran WhatsApp">
+              <ImagePicker value={form.image_url ?? ""} onChange={(v) => set("image_url", v)} />
+            </Field>
+          </div>
+          
+          <div className="grid gap-6 sm:grid-cols-2 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+            <Field label="Ordre d'affichage"><Input type="number" value={form.sort_order ?? 0} onChange={(e) => set("sort_order", Number(e.target.value))} className="rounded-lg" /></Field>
+            <div className="flex items-center gap-3 pt-8">
+              <Switch checked={form.is_active} onCheckedChange={(v) => set("is_active", v)} id="is-active-avis" />
+              <Label htmlFor="is-active-avis" className="text-sm font-medium cursor-pointer">Visible sur le site</Label>
             </div>
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Annuler</Button>
-          <Button onClick={save} disabled={saving}>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enregistrer"}</Button>
-        </DialogFooter>
+        
+        <div className="bg-slate-50 border-t border-slate-100 p-6 sticky bottom-0 z-10 flex justify-end gap-3">
+          <Button variant="outline" onClick={onClose} className="rounded-xl">Annuler</Button>
+          <Button onClick={save} disabled={saving} className="rounded-xl shadow-md">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            Enregistrer l'avis
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="space-y-1.5"><Label className="text-xs">{label}</Label>{children}</div>;
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm font-medium text-slate-700">{label}</Label>
+      {children}
+    </div>
+  );
 }
