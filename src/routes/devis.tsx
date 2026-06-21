@@ -12,6 +12,7 @@ import { BadgeCheck, MessageCircle, ShoppingBag, Truck } from "lucide-react";
 import { z } from "zod";
 import { useCart, type CartItem } from "@/lib/cart";
 import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
+import { supabase } from "@/integrations/supabase/client";
 
 const search = z.object({ produit: z.string().optional() });
 
@@ -64,20 +65,49 @@ function OrderPage() {
   const shipping = subtotal === 0 ? 0 : subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
   const total = subtotal + shipping;
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (lines.length === 0) {
       toast.error(t("cart.empty"));
       return;
     }
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
-      (e.target as HTMLFormElement).reset();
-      setSingleQty(1);
-      if (usingCart) clearCart();
-      toast.success(t("quote.success"));
-    }, 600);
+
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const phone = formData.get("phone") as string;
+    const city = formData.get("city") as string;
+    const address = formData.get("address") as string;
+    const details = formData.get("details") as string;
+
+    const message = `Ville : ${city}\nAdresse : ${address}\nNotes : ${details}`;
+    const items = lines.map(l => ({
+      slug: l.slug,
+      title: l.label,
+      qty: l.quantity,
+      price: l.price
+    }));
+
+    const { error } = await supabase.from('quotes').insert({
+      name,
+      phone,
+      message,
+      items,
+      status: 'new'
+    });
+
+    setSending(false);
+
+    if (error) {
+      console.error(error);
+      toast.error("Une erreur est survenue lors de la commande.");
+      return;
+    }
+
+    (e.target as HTMLFormElement).reset();
+    setSingleQty(1);
+    if (usingCart) clearCart();
+    toast.success(t("quote.success"));
   };
 
   const whatsappLink = () => {

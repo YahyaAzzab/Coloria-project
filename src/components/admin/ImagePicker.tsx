@@ -30,15 +30,11 @@ export function ImagePicker({ value, onChange }: Props) {
       setUploading(false);
       return;
     }
-    const { data: signed, error: sErr } = await supabase.storage
+    const { data: publicData } = supabase.storage
       .from("product-images")
-      .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
-    if (sErr || !signed?.signedUrl) {
-      toast.error(sErr?.message || "Erreur d'URL");
-      setUploading(false);
-      return;
-    }
-    onChange(signed.signedUrl);
+      .getPublicUrl(path);
+
+    onChange(publicData.publicUrl);
     toast.success("Image téléversée");
     setUploading(false);
   }
