@@ -55,7 +55,7 @@ export function SiteFooter() {
 
       <div className="border-t border-border/60">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-center text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
-          <span>© {year} {t("brand")}. {t("footer.rights")} — Fabriqué avec ❤️ au Maroc.</span>
+          <span>© {year} {t("brand")}. {t("footer.rights")}</span>
           <Link
             to="/admin/login"
             className="text-[11px] text-muted-foreground/60 transition-colors hover:text-foreground"
