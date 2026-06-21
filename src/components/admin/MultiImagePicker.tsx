@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, X, Plus, Link as LinkIcon } from "lucide-react";
+import { Loader2, X, Plus, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
+
+const BUCKET = "product-images";
 
 type Props = {
   value: string[];
@@ -12,44 +13,49 @@ type Props = {
 
 export function MultiImagePicker({ value, onChange }: Props) {
   const [uploading, setUploading] = useState(false);
-  const [urlInput, setUrlInput] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
-  function handleAddUrl() {
-    if (!urlInput.trim()) return;
-    if (!urlInput.startsWith("http")) {
-      toast.error("L'URL doit commencer par http");
-      return;
-    }
-    onChange([...value, urlInput.trim()]);
-    setUrlInput("");
-  }
-
   async function upload(file: File) {
+    // 1. Valider la taille
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Image trop volumineuse (max 5 Mo)");
       return;
     }
+
     setUploading(true);
+
+    // 2. Générer un nom unique
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const uuid = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-      ? crypto.randomUUID()
-      : Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 15);
-    const path = `${uuid}.${ext}`;
-    const { error } = await supabase.storage
-      .from("product-images")
-      .upload(path, file, { upsert: false, contentType: file.type });
-    if (error) {
-      toast.error(error.message);
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
+
+    // 3. Uploader dans le bucket product-images
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET)
+      .upload(fileName, file, {
+        upsert: false,
+        contentType: file.type,
+      });
+
+    if (uploadError) {
+      // Afficher un message d'erreur détaillé pour aider au débogage
+      console.error("Upload error:", uploadError);
+      if (uploadError.message.includes("Bucket not found") || uploadError.message.includes("bucket")) {
+        toast.error("Erreur : le dossier de stockage n'existe pas encore dans Supabase. Allez dans Supabase > Storage et créez un bucket nommé 'product-images'.");
+      } else if (uploadError.message.includes("not authorized") || uploadError.message.includes("security")) {
+        toast.error("Erreur d'autorisation : vous devez être connecté en tant qu'admin pour uploader.");
+      } else {
+        toast.error(`Erreur upload : ${uploadError.message}`);
+      }
       setUploading(false);
       return;
     }
-    const { data: publicData } = supabase.storage
-      .from("product-images")
-      .getPublicUrl(path);
 
-    onChange([...value, publicData.publicUrl]);
-    toast.success("Image téléversée");
+    // 4. Récupérer l'URL publique définitive
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+
+    // 5. Ajouter l'URL dans la liste et afficher l'aperçu
+    onChange([...value, data.publicUrl]);
+    toast.success("Image téléversée avec succès !");
     setUploading(false);
   }
 
@@ -60,51 +66,55 @@ export function MultiImagePicker({ value, onChange }: Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {value.map((url, i) => (
-          <div key={i} className="relative overflow-hidden rounded-md border border-border bg-cream aspect-square">
+          <div key={i} className="relative overflow-hidden rounded-lg border border-border bg-muted aspect-square group">
             <img src={url} alt={`Image ${i + 1}`} className="h-full w-full object-cover" />
-            <div className="absolute top-1 right-1">
-              <Button type="button" variant="destructive" size="icon" className="h-6 w-6" onClick={() => remove(i)} aria-label="Supprimer">
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+            <button
+              type="button"
+              onClick={() => remove(i)}
+              className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/90"
+              aria-label="Supprimer"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
             {i === 0 && (
-              <span className="absolute top-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">Principale</span>
+              <span className="absolute bottom-1 left-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded-sm">
+                Principale
+              </span>
             )}
           </div>
         ))}
-        
+
+        {/* Bouton d'ajout */}
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
           disabled={uploading}
-          className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border bg-muted/50 text-muted-foreground hover:bg-muted transition-colors aspect-square"
+          className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:border-primary/50 transition-all aspect-square cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <Plus className="h-6 w-6" />}
-          <span className="text-xs">Ajouter</span>
+          {uploading ? (
+            <>
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span className="text-xs">Envoi…</span>
+            </>
+          ) : (
+            <>
+              <Plus className="h-6 w-6" />
+              <span className="text-xs font-medium">Ajouter</span>
+            </>
+          )}
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <LinkIcon className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input 
-            placeholder="Ou coller une URL d'image (https://...)" 
-            value={urlInput}
-            onChange={e => setUrlInput(e.target.value)}
-            className="pl-9"
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleAddUrl();
-              }
-            }}
-          />
-        </div>
-        <Button type="button" variant="secondary" onClick={handleAddUrl}>Ajouter URL</Button>
-      </div>
+      {value.length === 0 && !uploading && (
+        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+          <ImageIcon className="h-3.5 w-3.5" />
+          Cliquez sur le carré pointillé pour ajouter une image.
+        </p>
+      )}
 
       <input
         ref={fileRef}
