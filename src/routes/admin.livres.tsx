@@ -37,6 +37,8 @@ import { toast } from "sonner";
 import { guardAdminRoute } from "@/lib/admin-auth.functions";
 import { MultiImagePicker } from "@/components/admin/MultiImagePicker";
 
+import { useCategories } from "@/data/products";
+
 export const Route = createFileRoute("/admin/livres")({
   ssr: false,
   beforeLoad: guardAdminRoute,
@@ -44,7 +46,6 @@ export const Route = createFileRoute("/admin/livres")({
   component: AdminBooks,
 });
 
-type Audience = "kids" | "teens" | "adults";
 type Book = {
   id: string;
   slug: string;
@@ -52,7 +53,8 @@ type Book = {
   tagline: string | null;
   description: string | null;
   price: number;
-  audience: Audience;
+  category_id: string | null;
+  category_slug?: string;
   image_url: string | null;
   images: string[];
   highlights: string[];
@@ -68,7 +70,7 @@ const emptyBook = (): Book => ({
   tagline: "",
   description: "",
   price: 98,
-  audience: "adults",
+  category_id: null,
   image_url: "",
   images: [],
   highlights: [],
@@ -87,7 +89,7 @@ function AdminBooks() {
   async function load() {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("*, categories(*)")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
     if (error) {
@@ -105,6 +107,7 @@ function AdminBooks() {
           highlights: Array.isArray(p.highlights) ? p.highlights : [],
           images,
           specs: p.specs ?? null,
+          category_slug: p.categories?.slug || "non classé",
         };
       })
     );
@@ -177,7 +180,7 @@ function AdminBooks() {
               
               <div className="flex flex-1 flex-col p-5">
                 <div className="mb-1 flex items-center gap-2 text-xs font-medium text-slate-500">
-                  <span className="capitalize px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{b.audience}</span>
+                  <span className="capitalize px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{b.category_slug}</span>
                   <span className="truncate">{b.slug}</span>
                 </div>
                 
@@ -257,7 +260,7 @@ function BookDialog({ book, onClose, onSaved }: { book: Book; onClose: () => voi
       tagline: form.tagline ?? "",
       description: form.description ?? "",
       price: Number(form.price) || 0,
-      audience: form.audience,
+      category_id: form.category_id || null,
       image_url: form.images && form.images.length > 0 ? form.images[0] : "",
       images: form.images ?? [],
       highlights,
@@ -294,13 +297,11 @@ function BookDialog({ book, onClose, onSaved }: { book: Book; onClose: () => voi
           
           <div className="grid gap-6 sm:grid-cols-3 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
             <Field label="Prix (DH)"><Input type="number" value={form.price} onChange={(e) => set("price", Number(e.target.value))} className="rounded-lg" /></Field>
-            <Field label="Univers">
-              <Select value={form.audience} onValueChange={(v) => set("audience", v as Audience)}>
-                <SelectTrigger className="rounded-lg"><SelectValue /></SelectTrigger>
+            <Field label="Catégorie">
+              <Select value={form.category_id || ""} onValueChange={(v) => set("category_id", v)}>
+                <SelectTrigger className="rounded-lg"><SelectValue placeholder="Choisir..." /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="kids">Enfants</SelectItem>
-                  <SelectItem value="teens">Ados</SelectItem>
-                  <SelectItem value="adults">Adultes</SelectItem>
+                  <CategoryOptions />
                 </SelectContent>
               </Select>
             </Field>
@@ -343,5 +344,16 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <Label className="text-sm font-medium text-slate-700">{label}</Label>
       {children}
     </div>
+  );
+}
+
+function CategoryOptions() {
+  const categories = useCategories();
+  return (
+    <>
+      {categories.map(c => (
+        <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
+      ))}
+    </>
   );
 }

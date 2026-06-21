@@ -17,15 +17,13 @@ import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as UniversEnfantsRouteImport } from './routes/univers.enfants'
-import { Route as UniversAdultesRouteImport } from './routes/univers.adultes'
-import { Route as UniversAdosRouteImport } from './routes/univers.ados'
 import { Route as ProduitsSlugRouteImport } from './routes/produits.$slug'
 import { Route as AdminPacksRouteImport } from './routes/admin.packs'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminLivresRouteImport } from './routes/admin.livres'
 import { Route as AdminDevisRouteImport } from './routes/admin.devis'
 import { Route as AdminContenuRouteImport } from './routes/admin.contenu'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminAvisRouteImport } from './routes/admin.avis'
 
 const PanierRoute = PanierRouteImport.update({
@@ -68,21 +66,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UniversEnfantsRoute = UniversEnfantsRouteImport.update({
-  id: '/univers/enfants',
-  path: '/univers/enfants',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UniversAdultesRoute = UniversAdultesRouteImport.update({
-  id: '/univers/adultes',
-  path: '/univers/adultes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UniversAdosRoute = UniversAdosRouteImport.update({
-  id: '/univers/ados',
-  path: '/univers/ados',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProduitsSlugRoute = ProduitsSlugRouteImport.update({
   id: '/produits/$slug',
   path: '/produits/$slug',
@@ -113,6 +96,11 @@ const AdminContenuRoute = AdminContenuRouteImport.update({
   path: '/admin/contenu',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
+  id: '/admin/categories',
+  path: '/admin/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAvisRoute = AdminAvisRouteImport.update({
   id: '/admin/avis',
   path: '/admin/avis',
@@ -128,15 +116,13 @@ export interface FileRoutesByFullPath {
   '/packs': typeof PacksRoute
   '/panier': typeof PanierRoute
   '/admin/avis': typeof AdminAvisRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/contenu': typeof AdminContenuRoute
   '/admin/devis': typeof AdminDevisRoute
   '/admin/livres': typeof AdminLivresRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/packs': typeof AdminPacksRoute
   '/produits/$slug': typeof ProduitsSlugRoute
-  '/univers/ados': typeof UniversAdosRoute
-  '/univers/adultes': typeof UniversAdultesRoute
-  '/univers/enfants': typeof UniversEnfantsRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -148,15 +134,13 @@ export interface FileRoutesByTo {
   '/packs': typeof PacksRoute
   '/panier': typeof PanierRoute
   '/admin/avis': typeof AdminAvisRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/contenu': typeof AdminContenuRoute
   '/admin/devis': typeof AdminDevisRoute
   '/admin/livres': typeof AdminLivresRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/packs': typeof AdminPacksRoute
   '/produits/$slug': typeof ProduitsSlugRoute
-  '/univers/ados': typeof UniversAdosRoute
-  '/univers/adultes': typeof UniversAdultesRoute
-  '/univers/enfants': typeof UniversEnfantsRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -169,15 +153,13 @@ export interface FileRoutesById {
   '/packs': typeof PacksRoute
   '/panier': typeof PanierRoute
   '/admin/avis': typeof AdminAvisRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/contenu': typeof AdminContenuRoute
   '/admin/devis': typeof AdminDevisRoute
   '/admin/livres': typeof AdminLivresRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/packs': typeof AdminPacksRoute
   '/produits/$slug': typeof ProduitsSlugRoute
-  '/univers/ados': typeof UniversAdosRoute
-  '/univers/adultes': typeof UniversAdultesRoute
-  '/univers/enfants': typeof UniversEnfantsRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -191,15 +173,13 @@ export interface FileRouteTypes {
     | '/packs'
     | '/panier'
     | '/admin/avis'
+    | '/admin/categories'
     | '/admin/contenu'
     | '/admin/devis'
     | '/admin/livres'
     | '/admin/login'
     | '/admin/packs'
     | '/produits/$slug'
-    | '/univers/ados'
-    | '/univers/adultes'
-    | '/univers/enfants'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -211,15 +191,13 @@ export interface FileRouteTypes {
     | '/packs'
     | '/panier'
     | '/admin/avis'
+    | '/admin/categories'
     | '/admin/contenu'
     | '/admin/devis'
     | '/admin/livres'
     | '/admin/login'
     | '/admin/packs'
     | '/produits/$slug'
-    | '/univers/ados'
-    | '/univers/adultes'
-    | '/univers/enfants'
     | '/admin'
   id:
     | '__root__'
@@ -231,15 +209,13 @@ export interface FileRouteTypes {
     | '/packs'
     | '/panier'
     | '/admin/avis'
+    | '/admin/categories'
     | '/admin/contenu'
     | '/admin/devis'
     | '/admin/livres'
     | '/admin/login'
     | '/admin/packs'
     | '/produits/$slug'
-    | '/univers/ados'
-    | '/univers/adultes'
-    | '/univers/enfants'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -252,15 +228,13 @@ export interface RootRouteChildren {
   PacksRoute: typeof PacksRoute
   PanierRoute: typeof PanierRoute
   AdminAvisRoute: typeof AdminAvisRoute
+  AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminContenuRoute: typeof AdminContenuRoute
   AdminDevisRoute: typeof AdminDevisRoute
   AdminLivresRoute: typeof AdminLivresRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminPacksRoute: typeof AdminPacksRoute
   ProduitsSlugRoute: typeof ProduitsSlugRoute
-  UniversAdosRoute: typeof UniversAdosRoute
-  UniversAdultesRoute: typeof UniversAdultesRoute
-  UniversEnfantsRoute: typeof UniversEnfantsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -322,27 +296,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/univers/enfants': {
-      id: '/univers/enfants'
-      path: '/univers/enfants'
-      fullPath: '/univers/enfants'
-      preLoaderRoute: typeof UniversEnfantsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/univers/adultes': {
-      id: '/univers/adultes'
-      path: '/univers/adultes'
-      fullPath: '/univers/adultes'
-      preLoaderRoute: typeof UniversAdultesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/univers/ados': {
-      id: '/univers/ados'
-      path: '/univers/ados'
-      fullPath: '/univers/ados'
-      preLoaderRoute: typeof UniversAdosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/produits/$slug': {
       id: '/produits/$slug'
       path: '/produits/$slug'
@@ -385,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContenuRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/admin/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/avis': {
       id: '/admin/avis'
       path: '/admin/avis'
@@ -404,15 +364,13 @@ const rootRouteChildren: RootRouteChildren = {
   PacksRoute: PacksRoute,
   PanierRoute: PanierRoute,
   AdminAvisRoute: AdminAvisRoute,
+  AdminCategoriesRoute: AdminCategoriesRoute,
   AdminContenuRoute: AdminContenuRoute,
   AdminDevisRoute: AdminDevisRoute,
   AdminLivresRoute: AdminLivresRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminPacksRoute: AdminPacksRoute,
   ProduitsSlugRoute: ProduitsSlugRoute,
-  UniversAdosRoute: UniversAdosRoute,
-  UniversAdultesRoute: UniversAdultesRoute,
-  UniversEnfantsRoute: UniversEnfantsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport

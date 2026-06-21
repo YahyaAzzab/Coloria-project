@@ -2,7 +2,14 @@ import { useQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import packGift from "@/assets/pack-gift.jpg";
 
-export type Audience = "kids" | "teens" | "adults";
+export type Category = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  sortOrder: number;
+  isActive: boolean;
+};
 
 export type Product = {
   id?: string;
@@ -15,7 +22,8 @@ export type Product = {
   price: number;
   image: string;
   images: string[];
-  audience: Audience;
+  category?: Category;
+  categoryId?: string | null;
 };
 
 export type Pack = {
@@ -74,7 +82,15 @@ function mapProduct(row: any): Product {
     price: Number(row.price) || 0,
     image: img,
     images: imgs,
-    audience: (row.audience ?? "adults") as Audience,
+    categoryId: row.category_id,
+    category: row.categories ? {
+      id: row.categories.id,
+      slug: row.categories.slug,
+      title: row.categories.title,
+      description: row.categories.description,
+      sortOrder: row.categories.sort_order,
+      isActive: row.categories.is_active,
+    } : undefined,
   };
 }
 
@@ -98,7 +114,7 @@ export const productsQuery = queryOptions({
   queryFn: async () => {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("*, categories(*)")
       .eq("is_active", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
@@ -126,4 +142,28 @@ export function useProducts(): Product[] {
 
 export function usePacks(): Pack[] {
   return useQuery(packsQuery).data ?? [];
+}
+
+export const categoriesQuery = queryOptions({
+  queryKey: ["categories", "public"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+    if (error) throw error;
+    return (data ?? []).map((row: any) => ({
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      sortOrder: row.sort_order,
+      isActive: row.is_active,
+    })) as Category[];
+  },
+});
+
+export function useCategories(): Category[] {
+  return useQuery(categoriesQuery).data ?? [];
 }

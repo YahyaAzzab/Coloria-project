@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Leaf, Truck, Pencil, Quote, Star, Gift } from "lucide-react";
-import heroImg from "@/assets/hero-coloragy.jpg";
+import heroImg from "@/assets/hero-coloragy-new.png";
 import { useProducts, usePacks } from "@/data/products";
 import { useTestimonials } from "@/data/testimonials";
 import { ProductCard } from "@/components/ProductCard";

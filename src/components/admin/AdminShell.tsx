@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, BookOpen, Package, Inbox, FileText, MessageSquareQuote, LogOut, Loader2, ShieldAlert, Menu, X, ChevronRight } from "lucide-react";
+import { LayoutDashboard, BookOpen, Package, Inbox, FileText, MessageSquareQuote, LogOut, Loader2, ShieldAlert, Menu, X, ChevronRight, FolderTree } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import logo from "@/assets/logo-coloragy.png";
 const NAV = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/admin/livres", label: "Livres", icon: BookOpen, exact: false },
+  { to: "/admin/categories", label: "Catégories", icon: FolderTree, exact: false },
   { to: "/admin/packs", label: "Packs", icon: Package, exact: false },
   { to: "/admin/avis", label: "Avis clients", icon: MessageSquareQuote, exact: false },
   { to: "/admin/devis", label: "Commandes", icon: Inbox, exact: false },

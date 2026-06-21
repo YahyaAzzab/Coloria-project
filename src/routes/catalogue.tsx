@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
-import { useProducts, type Audience } from "@/data/products";
+import { useProducts, useCategories } from "@/data/products";
 import { ChevronDown } from "lucide-react";
 
 export const Route = createFileRoute("/catalogue")({
@@ -20,19 +20,18 @@ const STEP = 6;
 
 function CataloguePage() {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState<"all" | Audience>("all");
+  const [filter, setFilter] = useState<string>("all");
   const [visible, setVisible] = useState(STEP);
   const products = useProducts();
+  const categories = useCategories();
 
-  const filtered = filter === "all" ? products : products.filter((p) => p.audience === filter);
+  const filtered = filter === "all" ? products : products.filter((p) => p.category?.slug === filter);
   const shown = filtered.slice(0, visible);
   const hasMore = visible < filtered.length;
 
-  const filters: { key: "all" | Audience; label: string }[] = [
+  const filters = [
     { key: "all", label: t("nav.catalogue") },
-    { key: "kids", label: t("nav.kids") },
-    { key: "teens", label: t("nav.teens") },
-    { key: "adults", label: t("nav.adults") },
+    ...categories.map(c => ({ key: c.slug, label: c.title }))
   ];
 
   return (

@@ -65,9 +65,42 @@ export type Database = {
         }
         Relationships: []
       }
+      categories: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          description: string | null
+          sort_order: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title: string
+          description?: string | null
+          sort_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          title?: string
+          description?: string | null
+          sort_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
-          audience: Database["public"]["Enums"]["audience"]
+          category_id: string | null
           created_at: string
           description: string
           highlights: Json
@@ -84,7 +117,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          audience?: Database["public"]["Enums"]["audience"]
+          category_id?: string | null
           created_at?: string
           description?: string
           highlights?: Json
@@ -101,7 +134,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          audience?: Database["public"]["Enums"]["audience"]
+          category_id?: string | null
           created_at?: string
           description?: string
           highlights?: Json
@@ -117,7 +150,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
