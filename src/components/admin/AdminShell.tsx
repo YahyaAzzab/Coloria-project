@@ -64,7 +64,7 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
       <aside className="hidden w-72 flex-col border-r border-slate-800 bg-slate-950 text-slate-300 lg:flex shadow-2xl relative z-20 transition-all duration-300">
         <div className="flex h-20 items-center gap-3 border-b border-slate-800/50 px-6 mt-2">
           <div className="bg-white p-1.5 rounded-lg shadow-sm">
-             <img src={logo} alt="Coloragy" className="h-8 w-auto" />
+             <img src={logo} alt="Coloragy" className="h-10 w-auto" />
           </div>
           <span className="font-serif text-xl text-white tracking-wide">Admin</span>
         </div>
@@ -141,7 +141,7 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
             <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setMobileMenuOpen(false)} />
             <div className="absolute inset-y-0 left-0 w-4/5 max-w-sm bg-white shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
                <div className="flex h-20 items-center justify-between border-b border-slate-100 px-6">
-                 <img src={logo} alt="Coloragy" className="h-8 w-auto" />
+                 <img src={logo} alt="Coloragy" className="h-12 w-auto" />
                  <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} className="rounded-full">
                    <X className="h-5 w-5" />
                  </Button>

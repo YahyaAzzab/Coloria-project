@@ -11,9 +11,8 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border/60 bg-cream">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="lg:col-span-2">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt={t("brand")} className="h-10 w-auto" />
-            <span className="font-serif text-2xl">{t("brand")}</span>
+          <div className="flex items-center">
+            <img src={logo} alt={t("brand")} className="h-14 w-auto" />
           </div>
           <p className="mt-4 max-w-md text-sm text-muted-foreground">{t("tagline")}</p>
 
