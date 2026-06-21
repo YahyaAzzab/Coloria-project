@@ -1,9 +1,10 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, BookOpen, Package, Inbox, FileText, MessageSquareQuote, LogOut, Loader2, ShieldAlert } from "lucide-react";
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
+import { ensureBucketsExist } from "@/lib/api/storage.functions";
 
 const NAV = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
@@ -23,6 +24,12 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
     await supabase.auth.signOut();
     navigate({ to: "/admin/login", replace: true });
   }
+
+  useEffect(() => {
+    if (auth.status === "authenticated") {
+      ensureBucketsExist().catch(console.error);
+    }
+  }, [auth.status]);
 
   if (auth.status === "loading") {
     return (
