@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, X, Plus } from "lucide-react";
+import { Loader2, X, Plus, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   value: string[];
@@ -11,7 +12,18 @@ type Props = {
 
 export function MultiImagePicker({ value, onChange }: Props) {
   const [uploading, setUploading] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  function handleAddUrl() {
+    if (!urlInput.trim()) return;
+    if (!urlInput.startsWith("http")) {
+      toast.error("L'URL doit commencer par http");
+      return;
+    }
+    onChange([...value, urlInput.trim()]);
+    setUrlInput("");
+  }
 
   async function upload(file: File) {
     if (file.size > 5 * 1024 * 1024) {
@@ -73,6 +85,25 @@ export function MultiImagePicker({ value, onChange }: Props) {
           {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <Plus className="h-6 w-6" />}
           <span className="text-xs">Ajouter</span>
         </button>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
+          <LinkIcon className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input 
+            placeholder="Ou coller une URL d'image (https://...)" 
+            value={urlInput}
+            onChange={e => setUrlInput(e.target.value)}
+            className="pl-9"
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddUrl();
+              }
+            }}
+          />
+        </div>
+        <Button type="button" variant="secondary" onClick={handleAddUrl}>Ajouter URL</Button>
       </div>
 
       <input
