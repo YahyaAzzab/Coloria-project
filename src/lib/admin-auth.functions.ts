@@ -11,8 +11,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const verifyAdminAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    // Check for manager role hardcoded using claims from the JWT
-    if (context.claims?.email === "dakarlom662@gmail.com") {
+    // Get the actual user object to check the email
+    const { data: { user } } = await context.supabase.auth.getUser();
+    
+    // Check for manager role
+    if (user?.email === "dakarlom662@gmail.com") {
       return { ok: true, role: "manager" as const };
     }
 

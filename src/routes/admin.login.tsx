@@ -19,22 +19,28 @@ function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const MANAGER_EMAIL = "dakarlom662@gmail.com";
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/admin", replace: true });
+      if (data.user) {
+        const dest = data.user.email === MANAGER_EMAIL ? "/admin/devis" : "/admin";
+        navigate({ to: dest, replace: true });
+      }
     });
   }, [navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
     if (error) {
       toast.error("Identifiants invalides");
       return;
     }
-    navigate({ to: "/admin", replace: true });
+    const dest = data.user?.email === MANAGER_EMAIL ? "/admin/devis" : "/admin";
+    navigate({ to: dest, replace: true });
   }
 
   return (
