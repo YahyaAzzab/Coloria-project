@@ -59,3 +59,6 @@ Ce projet est spécifiquement configuré pour être déployé sur **Vercel** gr�
 
 Le projet dispose d'une interface d'administration sécurisée accessible via `/admin/login`. 
 Assurez-vous que votre configuration Supabase et l'authentification (Row Level Security et clés Service Role) sont bien en place pour gérer les accès.
+
+---
+*Dernière mise à jour pour déclencher le déploiement sur Vercel.*
