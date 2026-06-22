@@ -182,11 +182,34 @@ function AdminQuotes() {
                     <Package className="h-3.5 w-3.5" /> Articles commandés
                   </div>
                   {Array.isArray(q.items) && q.items.length > 0 ? (
-                    <ul className="space-y-1">
+                    <ul className="space-y-3">
                       {q.items.map((it: any, i: number) => (
-                        <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
-                          <span className="text-primary font-medium">{it.qty ? `${it.qty}x` : "1x"}</span>
-                          <span className="line-clamp-2 leading-tight">{it.title ?? it.slug ?? JSON.stringify(it)}</span>
+                        <li key={i} className="flex gap-3 items-start">
+                          {it.image ? (
+                            <img src={it.image} alt={it.title} className="w-12 h-12 rounded-lg object-cover bg-slate-50 border border-slate-100 shrink-0" />
+                          ) : (
+                            <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                              <Package className="h-5 w-5 text-slate-300" />
+                            </div>
+                          )}
+                          <div className="flex-1 flex flex-col justify-center min-w-0">
+                            <div className="flex items-start gap-2">
+                              <span className="text-primary font-medium shrink-0">{it.qty ? `${it.qty}x` : "1x"}</span>
+                              <span className="text-sm text-slate-700 font-medium truncate">{it.title ?? it.slug ?? JSON.stringify(it)}</span>
+                            </div>
+                            {it.subtitle && !it.customPack?.bookTitles && (
+                              <span className="text-xs text-slate-500 truncate ml-[1.6rem]">{it.subtitle}</span>
+                            )}
+                            {it.customPack?.bookTitles && (
+                              <ul className="mt-1 ml-[1.6rem] space-y-0.5">
+                                {it.customPack.bookTitles.map((bTitle: string, idx: number) => (
+                                  <li key={idx} className="text-xs text-slate-500 flex items-center gap-1.5 before:content-['•'] before:text-slate-300">
+                                    {bTitle}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
                         </li>
                       ))}
                     </ul>

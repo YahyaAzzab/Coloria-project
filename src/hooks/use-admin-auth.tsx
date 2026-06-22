@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
-type State = { status: "loading" | "ok" | "denied"; email?: string };
+type State = { status: "loading" | "ok" | "denied"; email?: string; role?: "admin" | "manager" };
 
 export function useAdminAuth() {
   const navigate = useNavigate();
@@ -18,6 +18,12 @@ export function useAdminAuth() {
         navigate({ to: "/admin/login", replace: true });
         return;
       }
+      
+      if (userData.user.email === "managercoloria@gmail.com") {
+        setState({ status: "ok", email: userData.user.email, role: "manager" });
+        return;
+      }
+
       const { data: roleData, error: roleErr } = await supabase
         .from("user_roles")
         .select("role")
@@ -29,7 +35,7 @@ export function useAdminAuth() {
         setState({ status: "denied", email: userData.user.email ?? "" });
         return;
       }
-      setState({ status: "ok", email: userData.user.email ?? "" });
+      setState({ status: "ok", email: userData.user.email ?? "", role: "admin" });
     }
 
     check();

@@ -50,16 +50,37 @@ function OrderPage() {
 
   const lines = useMemo(() => {
     if (explicit) {
-      return [{ slug: explicit.slug, kind: explicit.kind, label: explicit.label, price: explicit.price, quantity: singleQty }];
+      const explicitImg = explicit.kind === "pack" 
+        ? packs.find(p => p.slug === explicit.slug)?.image 
+        : products.find(p => p.slug === explicit.slug)?.image;
+      
+      return [{ 
+        slug: explicit.slug, 
+        kind: explicit.kind, 
+        label: explicit.label, 
+        price: explicit.price, 
+        quantity: singleQty,
+        image: explicitImg,
+        subtitle: undefined,
+        customPack: undefined
+      }];
     }
     return cartItems
       .map((it: CartItem) => {
         const info = getInfo(it);
-        return info ? { slug: info.slug, kind: info.kind, label: info.title, price: info.price, quantity: it.quantity } : null;
+        return info ? { 
+          slug: info.slug, 
+          kind: info.kind, 
+          label: info.title, 
+          price: info.price, 
+          quantity: it.quantity,
+          image: info.image,
+          subtitle: info.subtitle,
+          customPack: it.customPack
+        } : null;
       })
-      .filter((x): x is { slug: string; kind: "book" | "pack" | "custom-pack"; label: string; price: number; quantity: number } => !!x);
-  }, [explicit, cartItems, singleQty, getInfo]);
-
+      .filter((x): x is NonNullable<typeof x> => !!x);
+  }, [explicit, cartItems, singleQty, getInfo, packs, products]);
 
   const subtotal = lines.reduce((s, l) => s + l.price * l.quantity, 0);
   const shipping = subtotal === 0 ? 0 : subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
@@ -85,7 +106,11 @@ function OrderPage() {
       slug: l.slug,
       title: l.label,
       qty: l.quantity,
-      price: l.price
+      price: l.price,
+      kind: l.kind,
+      image: l.image,
+      subtitle: l.subtitle,
+      customPack: l.customPack
     }));
 
     const { error } = await supabase.from('quotes').insert({

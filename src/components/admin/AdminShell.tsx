@@ -72,7 +72,7 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
         
         <nav className="flex-1 space-y-1.5 p-4 mt-4 overflow-y-auto">
           <div className="px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Gestion</div>
-          {NAV.map((item) => {
+          {NAV.filter(item => auth.role === "manager" ? item.to === "/admin/devis" : true).map((item) => {
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             return (
               <Link
@@ -97,11 +97,11 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
         <div className="border-t border-slate-800/50 p-4 bg-slate-950/50 backdrop-blur-md">
           <div className="flex items-center gap-3 px-2 mb-4">
             <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-coral flex items-center justify-center text-white font-bold text-xs shadow-md">
-              A
+              {auth.email?.[0].toUpperCase() ?? "A"}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">{auth.email}</p>
-              <p className="text-xs text-slate-500 truncate">Administrateur</p>
+              <p className="text-xs text-slate-500 truncate capitalize">{auth.role ?? "Administrateur"}</p>
             </div>
           </div>
           <button
@@ -148,7 +148,7 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
                  </Button>
                </div>
                <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
-                 {NAV.map((item) => {
+                 {NAV.filter(item => auth.role === "manager" ? item.to === "/admin/devis" : true).map((item) => {
                   const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
                   return (
                     <Link

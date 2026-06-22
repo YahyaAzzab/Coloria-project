@@ -11,13 +11,19 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const verifyAdminAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    // Check for manager role hardcoded
+    const { data: userData } = await context.supabase.auth.getUser();
+    if (userData?.user?.email === "managercoloria@gmail.com") {
+      return { ok: true, role: "manager" as const };
+    }
+
     const { data, error } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
       _role: "admin",
     });
-    if (error) throw new Error("AdminCheckFailed");
-    if (data !== true) throw new Error("NotAdmin");
-    return { ok: true as const };
+    
+    if (error || data !== true) throw new Error("NotAdminOrManager");
+    return { ok: true, role: "admin" as const };
   });
 
 /**
@@ -25,10 +31,16 @@ export const verifyAdminAccess = createServerFn({ method: "GET" })
  * to /admin/login if the user is not authenticated or not an admin.
  * This eliminates the brief "flash" of admin UI before the client-side hook redirects.
  */
-export async function guardAdminRoute() {
+export async function guardAdminRoute({ location }: { location: { pathname: string } }) {
   try {
-    await verifyAdminAccess();
-  } catch {
+    const res = await verifyAdminAccess();
+    if (res.role === "manager" && !location.pathname.startsWith("/admin/devis")) {
+      throw redirect({ to: "/admin/devis", replace: true });
+    }
+  } catch (err) {
+    if (err && typeof err === "object" && "isRedirect" in err) {
+      throw err;
+    }
     throw redirect({ to: "/admin/login", replace: true });
   }
 }
