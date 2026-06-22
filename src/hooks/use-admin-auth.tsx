@@ -19,7 +19,7 @@ export function useAdminAuth() {
         return;
       }
       
-      if (userData.user.email === "managercoloria@gmail.com") {
+      if (userData.user.email === "dakarlom662@gmail.com") {
         setState({ status: "ok", email: userData.user.email, role: "manager" });
         return;
       }

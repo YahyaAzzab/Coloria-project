@@ -12,7 +12,7 @@ export const verifyAdminAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     // Check for manager role hardcoded using claims from the JWT
-    if (context.claims?.email === "managercoloria@gmail.com") {
+    if (context.claims?.email === "dakarlom662@gmail.com") {
       return { ok: true, role: "manager" as const };
     }
 
