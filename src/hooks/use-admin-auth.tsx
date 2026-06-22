@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+
+const MANAGER_EMAIL = "dakarlom662@gmail.com";
 
 type State = { status: "loading" | "ok" | "denied"; email?: string; role?: "admin" | "manager" };
 
 export function useAdminAuth() {
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [state, setState] = useState<State>({ status: "loading" });
 
   useEffect(() => {
@@ -19,7 +22,12 @@ export function useAdminAuth() {
         return;
       }
       
-      if (userData.user.email === "dakarlom662@gmail.com") {
+      if (userData.user.email === MANAGER_EMAIL) {
+        // Manager can only access /admin/devis — redirect if elsewhere
+        if (!pathname.startsWith("/admin/devis")) {
+          navigate({ to: "/admin/devis", replace: true });
+          return;
+        }
         setState({ status: "ok", email: userData.user.email, role: "manager" });
         return;
       }

@@ -29,20 +29,11 @@ export const verifyAdminAccess = createServerFn({ method: "GET" })
   });
 
 /**
- * Use inside a route's `beforeLoad`. Calls the server fn and throws a redirect
- * to /admin/login if the user is not authenticated or not an admin.
- * This eliminates the brief "flash" of admin UI before the client-side hook redirects.
+ * Use inside a route's `beforeLoad`. All admin routes are ssr:false, so this
+ * is a no-op on the server. Protection is handled client-side by useAdminAuth.
+ * The manager redirect is handled in the login page and useAdminAuth hook.
  */
-export async function guardAdminRoute({ location }: { location: { pathname: string } }) {
-  try {
-    const res = await verifyAdminAccess();
-    if (res.role === "manager" && !location.pathname.startsWith("/admin/devis")) {
-      throw redirect({ to: "/admin/devis", replace: true });
-    }
-  } catch (err) {
-    if (err && typeof err === "object" && "isRedirect" in err) {
-      throw err;
-    }
-    throw redirect({ to: "/admin/login", replace: true });
-  }
+export async function guardAdminRoute() {
+  // No-op: client-side auth protection is handled by useAdminAuth hook
+  // which redirects to /admin/login if not authenticated/authorised.
 }
