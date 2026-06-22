@@ -67,7 +67,7 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
           <div className="bg-white p-1.5 rounded-lg shadow-sm">
              <img src={logo} alt="Coloragy" className="h-10 w-auto" />
           </div>
-          <span className="font-serif text-xl text-white tracking-wide">Admin</span>
+          <span className="font-serif text-xl text-white tracking-wide">Coloragy</span>
         </div>
         
         <nav className="flex-1 space-y-1.5 p-4 mt-4 overflow-y-auto">

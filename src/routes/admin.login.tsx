@@ -50,8 +50,8 @@ function AdminLoginPage() {
           <span className="grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground">
             <Lock className="h-5 w-5" />
           </span>
-          <h1 className="font-serif text-2xl">Espace admin</h1>
-          <p className="text-center text-xs text-muted-foreground">Réservé à l'administrateur.</p>
+          <h1 className="font-serif text-2xl">Espace Coloragy</h1>
+          <p className="text-center text-xs text-muted-foreground">Connectez-vous pour accéder à votre espace.</p>
         </div>
 
         <div className="space-y-4">
