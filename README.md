@@ -62,3 +62,5 @@ Assurez-vous que votre configuration Supabase et l'authentification (Row Level S
 
 ---
 *Dernière mise à jour pour déclencher le déploiement sur Vercel.*
+
+

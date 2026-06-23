@@ -34,6 +34,7 @@ function OrderPage() {
   const products = useProducts();
   const packs = usePacks();
   const [sending, setSending] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [singleQty, setSingleQty] = useState(1);
 
   const catalog = useMemo(
@@ -132,7 +133,7 @@ function OrderPage() {
     (e.target as HTMLFormElement).reset();
     setSingleQty(1);
     if (usingCart) clearCart();
-    toast.success(t("quote.success"));
+    setIsSuccess(true);
   };
 
   const whatsappLink = () => {
@@ -140,6 +141,40 @@ function OrderPage() {
     const msg = `Bonjour Coloragy, je souhaite commander :%0A${list}%0A• Total : ${total} DH (paiement à la livraison)`;
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   };
+
+  if (isSuccess) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+        <style>{`
+          @keyframes success-pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          .animate-success-pop {
+            animation: success-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          }
+        `}</style>
+        <div className="flex flex-col items-center justify-center space-y-8 text-center animate-success-pop">
+          <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-coral/10 text-coral">
+            <BadgeCheck className="h-14 w-14" />
+            <div className="absolute inset-0 rounded-full animate-ping bg-coral/20 opacity-20 duration-1000" style={{ animationDuration: '2s' }}></div>
+          </div>
+          <div className="space-y-4">
+            <h1 className="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+              Commande confirmée !
+            </h1>
+            <p className="mx-auto max-w-xl text-lg text-muted-foreground">
+              Merci pour votre confiance. L'équipe de <span className="font-serif font-medium text-foreground">Coloragy</span> vous contactera dans quelques instants pour confirmer votre commande.
+            </p>
+          </div>
+          <Button asChild size="lg" className="mt-8 rounded-full px-8">
+            <Link to="/catalogue">Retour au catalogue</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
