@@ -4,14 +4,19 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product } from "@/data/products";
 import { useCart } from "@/lib/cart";
+import { useState } from "react";
 
 export function ProductCard({ product }: { product: Product }) {
   const { t } = useTranslation();
   const { add } = useCart();
+  const [added, setAdded] = useState(false);
 
-  const onAdd = () => {
+  const onAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
     add(product.slug, "book", 1);
+    setAdded(true);
     toast.success(`${product.title} ${t("cart.added")}`);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -42,11 +47,25 @@ export function ProductCard({ product }: { product: Product }) {
           <button
             type="button"
             onClick={onAdd}
+            disabled={added}
             aria-label={t("cart.add") as string}
-            className="inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1.5 text-[11px] font-medium text-background transition-colors hover:bg-primary sm:text-xs"
+            className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-medium transition-all sm:text-xs ${
+              added 
+                ? "bg-green-500 text-white" 
+                : "bg-foreground text-background hover:bg-primary"
+            }`}
           >
-            <Plus className="h-3.5 w-3.5" />
-            {t("cart.add")}
+            {added ? (
+              <>
+                <svg className="h-3.5 w-3.5 animate-in zoom-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Ajouté
+              </>
+            ) : (
+              <>
+                <Plus className="h-3.5 w-3.5" />
+                {t("cart.add")}
+              </>
+            )}
           </button>
         </div>
       </div>

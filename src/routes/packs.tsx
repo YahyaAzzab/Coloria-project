@@ -40,6 +40,7 @@ function PacksPage() {
   );
   const [tier, setTier] = useState<PackTier>(initialTier);
   const [selected, setSelected] = useState<string[]>([]);
+  const [addedPack, setAddedPack] = useState(false);
 
   const tierLabel = (size: number) =>
     t(`packsCreate.tiers.${size}.label`, { defaultValue: PACK_TIERS.find((x) => x.size === size)?.label ?? "" });
@@ -110,6 +111,9 @@ function PacksPage() {
     setSelected([]);
     if (opts?.goToCheckout) {
       navigate({ to: "/panier" });
+    } else {
+      setAddedPack(true);
+      setTimeout(() => setAddedPack(false), 2000);
     }
   };
 
@@ -315,13 +319,22 @@ function PacksPage() {
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Button
                   onClick={() => addToCart()}
-                  disabled={!isComplete}
+                  disabled={!isComplete || addedPack}
                   size="lg"
                   variant="outline"
-                  className="rounded-full"
+                  className={`rounded-full transition-all duration-300 ${addedPack ? "bg-green-500 text-white hover:bg-green-600 border-transparent" : ""}`}
                 >
-                  <ShoppingBag className="me-1.5 h-4 w-4" />
-                  {isComplete ? t("packsCreate.addToCart") : t("packsCreate.remaining", { n: remaining })}
+                  {addedPack ? (
+                    <>
+                      <svg className="me-1.5 h-4 w-4 animate-in zoom-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Ajouté au panier !
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="me-1.5 h-4 w-4" />
+                      {isComplete ? t("packsCreate.addToCart") : t("packsCreate.remaining", { n: remaining })}
+                    </>
+                  )}
                 </Button>
                 {isComplete && (
                   <Button

@@ -26,6 +26,7 @@ function ProductPage() {
   const products = useProducts();
   const product = useMemo(() => products.find((p) => p.slug === params.slug), [products, params.slug]);
   const [active, setActive] = useState(0);
+  const [added, setAdded] = useState(false);
 
   const related = useMemo(
     () => (product ? products.filter((p) => p.slug !== product.slug && p.audience === product.audience).slice(0, 4) : []),
@@ -44,7 +45,9 @@ function ProductPage() {
 
   const onAdd = () => {
     add(product.slug, "book", 1);
+    setAdded(true);
     toast.success(`${product.title} ${t("cart.added")}`);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   const waMsg = encodeURIComponent(
@@ -111,8 +114,22 @@ function ProductPage() {
           </ul>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button size="lg" onClick={onAdd} className="rounded-full">
-              <Plus className="me-2 h-4 w-4" /> {t("cart.add")}
+            <Button 
+              size="lg" 
+              onClick={onAdd} 
+              disabled={added}
+              className={`rounded-full transition-all duration-300 ${added ? "bg-green-500 text-white hover:bg-green-600" : ""}`}
+            >
+              {added ? (
+                <>
+                  <svg className="me-2 h-4 w-4 animate-in zoom-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Ajouté au panier !
+                </>
+              ) : (
+                <>
+                  <Plus className="me-2 h-4 w-4" /> {t("cart.add")}
+                </>
+              )}
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full">
               <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${waMsg}`} target="_blank" rel="noopener noreferrer">
