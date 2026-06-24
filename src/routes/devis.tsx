@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useProducts, usePacks } from "@/data/products";
-import { MOROCCAN_CITIES, SHIPPING_FEE, FREE_SHIPPING_FROM } from "@/data/morocco";
+import { SHIPPING_FEE, FREE_SHIPPING_FROM } from "@/data/morocco";
 import { BadgeCheck, MessageCircle, ShoppingBag, Truck } from "lucide-react";
 import { z } from "zod";
 import { useCart, type CartItem } from "@/lib/cart";
@@ -233,18 +233,7 @@ function OrderPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label htmlFor="city">{t("quote.city")}</Label>
-                <select
-                  id="city"
-                  name="city"
-                  required
-                  defaultValue=""
-                  className="mt-1.5 flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm"
-                >
-                  <option value="" disabled>—</option>
-                  {MOROCCAN_CITIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
+                <Input id="city" name="city" required placeholder="Ex: Casablanca" className="mt-1.5" />
               </div>
               <div>
                 <Label htmlFor="address">{t("quote.address")}</Label>
