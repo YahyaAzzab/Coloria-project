@@ -182,9 +182,27 @@ function OrderPage() {
           .animate-receipt {
             animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           }
+          @media print {
+            body * { visibility: hidden; }
+            .print-area, .print-area * { visibility: visible; }
+            .print-area {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100%;
+              margin: 0;
+              padding: 0;
+              box-shadow: none !important;
+              border: none !important;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .print-hide { display: none !important; }
+            @page { margin: 1cm; }
+          }
         `}</style>
         
-        <div className="animate-receipt mx-auto overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl">
+        <div className="animate-receipt print-area mx-auto overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl print:rounded-none">
           {/* Header */}
           <div className="bg-coral/5 px-6 py-10 text-center sm:px-12 sm:py-14">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-coral/20 text-coral shadow-inner">
@@ -291,7 +309,7 @@ function OrderPage() {
             </div>
           </div>
           
-          <div className="flex flex-col gap-3 bg-muted/30 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-12">
+          <div className="print-hide flex flex-col gap-3 bg-muted/30 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-12">
             <Button variant="outline" className="rounded-full bg-background" onClick={() => window.print()}>
               <Printer className="me-2 h-4 w-4" />
               Imprimer le reçu
