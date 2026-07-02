@@ -145,9 +145,14 @@ function AdminQuotes() {
                   </Select>
                 </div>
                 
-                <h3 className="text-lg font-serif font-semibold text-slate-900 leading-tight">
-                  {q.name ?? "Client anonyme"}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-serif font-semibold text-slate-900 leading-tight">
+                    {q.name ?? "Client anonyme"}
+                  </h3>
+                  <span className="text-xs font-mono font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                    #{q.id.substring(0, 5).toUpperCase()}
+                  </span>
+                </div>
                 
                 <div className="mt-4 space-y-2.5 text-sm text-slate-600">
                   <div className="flex items-center gap-2.5">

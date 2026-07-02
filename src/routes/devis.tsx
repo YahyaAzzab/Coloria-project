@@ -134,7 +134,10 @@ function OrderPage() {
       customPack: l.customPack
     }));
 
+    const orderId = crypto.randomUUID();
+
     const { error } = await supabase.from('quotes').insert({
+      id: orderId,
       name,
       phone,
       message,
@@ -155,7 +158,7 @@ function OrderPage() {
     if (usingCart) clearCart();
     
     setReceipt({
-      orderId: String(Math.floor(Math.random() * 90000) + 10000),
+      orderId: orderId.substring(0, 5).toUpperCase(),
       date: new Date(),
       customer: { name, phone, city, address },
       items: lines.map(l => ({ title: l.label, qty: l.quantity, price: l.price, image: l.image })),
