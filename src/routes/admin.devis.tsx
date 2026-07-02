@@ -181,8 +181,8 @@ function AdminQuotes() {
                 )}
               </div>
 
-              <div className="mt-6 pt-5 border-t border-slate-100 flex items-end justify-between">
-                <div className="flex-1">
+              <div className="mt-6 pt-5 border-t border-slate-100 flex items-end justify-between gap-4">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-900 uppercase tracking-wider">
                     <Package className="h-3.5 w-3.5" /> Articles commandés
                   </div>

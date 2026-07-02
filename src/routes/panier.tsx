@@ -62,7 +62,7 @@ function CartPage() {
                   <div className="h-24 w-20 shrink-0 overflow-hidden rounded-xl bg-cream sm:h-28 sm:w-24">
                     <img src={info.image} alt={info.title} className="h-full w-full object-cover" />
                   </div>
-                  <div className="flex flex-1 flex-col justify-between gap-2">
+                  <div className="flex flex-1 flex-col justify-between gap-2 min-w-0">
                     <div>
                       <h3 className="font-serif text-base sm:text-lg">{info.title}</h3>
                       <p className="line-clamp-1 text-xs text-muted-foreground sm:text-sm">{info.subtitle}</p>

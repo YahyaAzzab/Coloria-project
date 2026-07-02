@@ -263,7 +263,7 @@ function OrderPage() {
                         <div className="h-full w-full bg-muted" />
                       )}
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="font-medium line-clamp-1">{it.title}</div>
                       <div className="text-sm text-muted-foreground">Qté : {it.qty}</div>
                     </div>
