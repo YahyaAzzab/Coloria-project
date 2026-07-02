@@ -8,13 +8,33 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useProducts, usePacks } from "@/data/products";
 import { SHIPPING_FEE, FREE_SHIPPING_FROM } from "@/data/morocco";
-import { BadgeCheck, MessageCircle, ShoppingBag, Truck } from "lucide-react";
+import { BadgeCheck, MessageCircle, ShoppingBag, Truck, Printer, MapPin, CreditCard, Calendar, Hash, Package } from "lucide-react";
 import { z } from "zod";
 import { useCart, type CartItem } from "@/lib/cart";
 import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
 
 const search = z.object({ produit: z.string().optional() });
+
+type OrderReceipt = {
+  orderId: string;
+  date: Date;
+  customer: {
+    name: string;
+    phone: string;
+    city: string;
+    address: string;
+  };
+  items: Array<{
+    title: string;
+    qty: number;
+    price: number;
+    image?: string;
+  }>;
+  subtotal: number;
+  shipping: number;
+  total: number;
+};
 
 export const Route = createFileRoute("/devis")({
   validateSearch: search,
@@ -34,7 +54,7 @@ function OrderPage() {
   const products = useProducts();
   const packs = usePacks();
   const [sending, setSending] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [receipt, setReceipt] = useState<OrderReceipt | null>(null);
   const [singleQty, setSingleQty] = useState(1);
 
   const catalog = useMemo(
@@ -114,13 +134,13 @@ function OrderPage() {
       customPack: l.customPack
     }));
 
-    const { error } = await supabase.from('quotes').insert({
+    const { data, error } = await supabase.from('quotes').insert({
       name,
       phone,
       message,
       items,
       status: 'new'
-    });
+    }).select().single();
 
     setSending(false);
 
@@ -133,7 +153,16 @@ function OrderPage() {
     (e.target as HTMLFormElement).reset();
     setSingleQty(1);
     if (usingCart) clearCart();
-    setIsSuccess(true);
+    
+    setReceipt({
+      orderId: data?.id ? String(data.id).padStart(5, '0') : String(Math.floor(Math.random() * 90000) + 10000),
+      date: new Date(),
+      customer: { name, phone, city, address },
+      items: lines.map(l => ({ title: l.label, qty: l.quantity, price: l.price, image: l.image })),
+      subtotal,
+      shipping,
+      total
+    });
   };
 
   const whatsappLink = () => {
@@ -142,35 +171,135 @@ function OrderPage() {
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   };
 
-  if (isSuccess) {
+  if (receipt) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+      <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <style>{`
-          @keyframes success-pop {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
+          @keyframes slide-up-fade {
+            0% { transform: translateY(40px) scale(0.95); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
           }
-          .animate-success-pop {
-            animation: success-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          .animate-receipt {
+            animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           }
         `}</style>
-        <div className="flex flex-col items-center justify-center space-y-8 text-center animate-success-pop">
-          <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-coral/10 text-coral">
-            <BadgeCheck className="h-14 w-14" />
-            <div className="absolute inset-0 rounded-full animate-ping bg-coral/20 opacity-20 duration-1000" style={{ animationDuration: '2s' }}></div>
-          </div>
-          <div className="space-y-4">
-            <h1 className="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Commande confirmée !
+        
+        <div className="animate-receipt mx-auto overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl">
+          {/* Header */}
+          <div className="bg-coral/5 px-6 py-10 text-center sm:px-12 sm:py-14">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-coral/20 text-coral shadow-inner">
+              <BadgeCheck className="h-10 w-10" />
+            </div>
+            <h1 className="mt-6 font-serif text-3xl font-bold text-foreground sm:text-4xl">
+              Merci pour votre commande !
             </h1>
-            <p className="mx-auto max-w-xl text-lg text-muted-foreground">
-              Merci pour votre confiance. L'équipe de <span className="font-serif font-medium text-foreground">Coloragy</span> vous contactera dans quelques instants pour confirmer votre commande.
+            <p className="mt-2 text-muted-foreground">
+              Nous l'avons bien reçue et la préparons avec soin. L'équipe Coloragy vous contactera bientôt.
             </p>
           </div>
-          <Button asChild size="lg" className="mt-8 rounded-full px-8">
-            <Link to="/catalogue">Retour au catalogue</Link>
-          </Button>
+          
+          {/* Order Meta */}
+          <div className="grid grid-cols-2 gap-4 border-y border-dashed border-border bg-cream/30 px-6 py-6 sm:grid-cols-4 sm:px-12">
+            <div>
+              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <Hash className="h-3.5 w-3.5" /> N° de commande
+              </div>
+              <div className="mt-1.5 font-medium">{receipt.orderId}</div>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5" /> Date
+              </div>
+              <div className="mt-1.5 font-medium">
+                {receipt.date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <CreditCard className="h-3.5 w-3.5" /> Paiement
+              </div>
+              <div className="mt-1.5 font-medium">À la livraison</div>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <Package className="h-3.5 w-3.5" /> Statut
+              </div>
+              <div className="mt-1.5 font-medium text-turquoise">En préparation</div>
+            </div>
+          </div>
+
+          <div className="grid gap-8 px-6 py-10 sm:grid-cols-5 sm:px-12 sm:py-12">
+            {/* Items & Total */}
+            <div className="sm:col-span-3">
+              <h2 className="font-serif text-xl font-medium">Détails de la commande</h2>
+              <ul className="mt-6 space-y-4">
+                {receipt.items.map((it, idx) => (
+                  <li key={idx} className="flex items-center gap-4">
+                    <div className="h-16 w-12 shrink-0 overflow-hidden rounded-md border border-border bg-cream">
+                      {it.image ? (
+                        <img src={it.image} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="h-full w-full bg-muted" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium line-clamp-1">{it.title}</div>
+                      <div className="text-sm text-muted-foreground">Qté : {it.qty}</div>
+                    </div>
+                    <div className="text-end font-medium">
+                      {it.price * it.qty} <span className="text-xs text-muted-foreground">DH</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              
+              <div className="mt-8 space-y-3 border-t border-dashed border-border pt-6 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Sous-total</span>
+                  <span className="font-medium">{receipt.subtotal} DH</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Livraison</span>
+                  <span className="font-medium">{receipt.shipping === 0 ? "Offerte" : `${receipt.shipping} DH`}</span>
+                </div>
+                <div className="flex justify-between border-t border-border pt-4">
+                  <span className="font-serif text-lg font-medium">Total à payer</span>
+                  <span className="font-serif text-2xl text-primary">{receipt.total} DH</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Customer Info */}
+            <div className="rounded-2xl border border-border bg-cream/40 p-6 sm:col-span-2">
+              <h2 className="font-serif text-lg font-medium">Informations</h2>
+              <div className="mt-6 space-y-6 text-sm">
+                <div>
+                  <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                    <MapPin className="h-4 w-4 text-coral" /> Adresse de livraison
+                  </div>
+                  <address className="mt-2 text-muted-foreground not-italic">
+                    <span className="block font-medium text-foreground">{receipt.customer.name}</span>
+                    <span className="block mt-1">{receipt.customer.address}</span>
+                    <span className="block">{receipt.customer.city}</span>
+                    <span className="block mt-1">{receipt.customer.phone}</span>
+                  </address>
+                </div>
+                <div className="rounded-xl bg-background p-4 text-xs text-muted-foreground shadow-sm">
+                  Le livreur vous contactera sur ce numéro avant de passer. Veuillez garder votre téléphone à proximité.
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex flex-col gap-3 bg-muted/30 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-12">
+            <Button variant="outline" className="rounded-full bg-background" onClick={() => window.print()}>
+              <Printer className="me-2 h-4 w-4" />
+              Imprimer le reçu
+            </Button>
+            <Button asChild className="rounded-full">
+              <Link to="/catalogue">Continuer mes achats</Link>
+            </Button>
+          </div>
         </div>
       </div>
     );
