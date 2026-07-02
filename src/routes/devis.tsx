@@ -134,13 +134,13 @@ function OrderPage() {
       customPack: l.customPack
     }));
 
-    const { data, error } = await supabase.from('quotes').insert({
+    const { error } = await supabase.from('quotes').insert({
       name,
       phone,
       message,
       items,
       status: 'new'
-    }).select().single();
+    });
 
     setSending(false);
 
@@ -155,7 +155,7 @@ function OrderPage() {
     if (usingCart) clearCart();
     
     setReceipt({
-      orderId: data?.id ? String(data.id).padStart(5, '0') : String(Math.floor(Math.random() * 90000) + 10000),
+      orderId: String(Math.floor(Math.random() * 90000) + 10000),
       date: new Date(),
       customer: { name, phone, city, address },
       items: lines.map(l => ({ title: l.label, qty: l.quantity, price: l.price, image: l.image })),
